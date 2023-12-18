@@ -1,19 +1,19 @@
 {
   "main": {
-    "id": "1f8663a57fee5483",
+    "id": "c9998cc56ee4f35c",
     "type": "split",
     "children": [
       {
-        "id": "2b930a0474981773",
+        "id": "cc0de34492976dfc",
         "type": "tabs",
         "children": [
           {
-            "id": "0bf4809395df1368",
+            "id": "1c19351346610b62",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Base/English/Words/reply.md",
+                "file": "Base/English/Words/encourage.md",
                 "mode": "source",
                 "source": false
               }
@@ -25,15 +25,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "307d616ce6a4b782",
+    "id": "760cddbe97e68127",
     "type": "split",
     "children": [
       {
-        "id": "41ccbd02310d8e5c",
+        "id": "778aadc5d1b84fc2",
         "type": "tabs",
         "children": [
           {
-            "id": "d85a4c666a43a58e",
+            "id": "932c12678ed47acc",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -43,7 +43,7 @@
             }
           },
           {
-            "id": "772dccf0eb00763f",
+            "id": "116ad111c94e4ac6",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -58,7 +58,7 @@
             }
           },
           {
-            "id": "4b3f02fd29349d34",
+            "id": "fc789c98779f5b60",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -69,24 +69,23 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
-    "id": "38c3de761163f663",
+    "id": "07326318166fe033",
     "type": "split",
     "children": [
       {
-        "id": "ff8a4534bcb473b4",
+        "id": "532485509ca0a01e",
         "type": "tabs",
         "children": [
           {
-            "id": "1550bc5fad161399",
+            "id": "5f1ed91b18aac6ec",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Base/English/Words/reply.md",
+                "file": "Base/English/Words/encourage.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -98,19 +97,19 @@
             }
           },
           {
-            "id": "79a914916c29ad7d",
+            "id": "64e15a7e89038750",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Base/English/Words/reply.md",
+                "file": "Base/English/Words/encourage.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
             }
           },
           {
-            "id": "9eda4fa6dd9ca252",
+            "id": "1ab575838ceb68e3",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -121,12 +120,12 @@
             }
           },
           {
-            "id": "f55d134f3dc2f04f",
+            "id": "2cfb7c790da0ba59",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
-                "file": "Base/English/Words/reply.md"
+                "file": "Base/English/Words/encourage.md"
               }
             }
           }
@@ -147,26 +146,32 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "0bf4809395df1368",
+  "active": "1c19351346610b62",
   "lastOpenFiles": [
-    "Base/English/Words/conscious.md",
-    "Base/English/Words/reply.md",
     "Base/English/Words/enrich.md",
+    "Base/English/Words/persist.md",
     "Base/English/Words/reveal.md",
+    "Base/English/Words/silence.md",
+    "Base/English/Words/tittle-tattle.md",
+    "Base/English/Words/Raw/drown.md",
+    "Base/English/Words/Raw/recap.md",
+    "Base/English/Words/Raw/forcefully.md",
+    "Base/English/Words/encourage.md",
+    "Base/English/Words/conscious.md",
     "Base/English/Words/competition.md",
     "Base/English/Words/chinwag.md",
-    "Base/English/Words/confidence.md",
-    "Base/English/Words/encourage.md",
+    "Base/English/Words/Raw/confidence.md",
+    "Base/English/Words/Raw/gossip.md",
+    "Base/English/Words/Raw",
+    "Base/English/Words/reply.md",
     "Base/English/Phrases/To give smth a try.md",
-    "Base/English/Phrases/That's the spirit.md",
     "Templates/English word.md",
     "Templates/English phrase.md",
-    "Base/English/Phrases.md",
-    "Base/English/Phrases",
-    "Base/English/Words",
-    "Base/English",
     "Templates",
-    "Files",
+    "Base/English/Phrases/That's the spirit.md",
+    "Base/English/Words",
+    "Base/English/Phrases",
+    "Base/English",
     "Base"
   ]
 }
