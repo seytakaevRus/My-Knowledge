@@ -5,7 +5,7 @@ subject: casual conversation
 ---
 ## Word
 
-`to encourage someone in something` - to talk or behave in a way tha gives someone confidence to do something.
+`to encourage someone in something` - to talk or behave in a way that gives someone confidence to do something.
 
 ---
 ## How to remember
