@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Base/English/Words/reply.md",
+                "file": "Base/English/Words/keen.md",
                 "mode": "source",
                 "source": false
               }
@@ -69,8 +69,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
     "id": "38c3de761163f663",
@@ -86,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Base/English/Words/reply.md",
+                "file": "Base/English/Words/keen.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -103,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Base/English/Words/reply.md",
+                "file": "Base/English/Words/keen.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Base/English/Words/reply.md"
+                "file": "Base/English/Words/keen.md"
               }
             }
           }
@@ -150,17 +149,26 @@
   "active": "0bf4809395df1368",
   "lastOpenFiles": [
     "Base/English/Words/conscious.md",
-    "Base/English/Words/reply.md",
-    "Base/English/Words/enrich.md",
-    "Base/English/Words/reveal.md",
+    "Base/English/Words/understatement.md",
     "Base/English/Words/competition.md",
-    "Base/English/Words/chinwag.md",
-    "Base/English/Words/confidence.md",
     "Base/English/Words/encourage.md",
+    "Base/English/Words/enrich.md",
+    "Base/English/Words/graze.md",
+    "Base/English/Words/keen.md",
+    "Base/English/Words/reply.md",
+    "Base/English/Words/reveal.md",
+    "Base/English/Words/perceive.md",
+    "Base/English/Words/chinwag.md",
+    "Templates/English word.md",
+    "Base/English/Words/corpse.md",
+    "Base/English/Phrases/Given smth.md",
     "Base/English/Phrases/To give smth a try.md",
     "Base/English/Phrases/That's the spirit.md",
-    "Templates/English word.md",
+    "Base/English/Words/confidence.md",
+    "Base/Books/Игра Эндера.md",
+    "Templates/Book template.md",
     "Templates/English phrase.md",
+    "Base/Books",
     "Base/English/Phrases.md",
     "Base/English/Phrases",
     "Base/English/Words",
