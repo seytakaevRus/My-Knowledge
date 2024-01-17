@@ -1,7 +1,6 @@
 ---
 tags:
   - "#english"
-subject:
 ---
 ## Phrase
 
