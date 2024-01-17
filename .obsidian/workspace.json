@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Base/English/Phrases/In and of itself.md",
+                "file": "Base/Books/Сияние.md",
                 "mode": "source",
                 "source": false
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Base/English/Phrases/In and of itself.md",
+                "file": "Base/Books/Сияние.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Base/English/Phrases/In and of itself.md",
+                "file": "Base/Books/Сияние.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Base/English/Phrases/In and of itself.md"
+                "file": "Base/Books/Сияние.md"
               }
             }
           }
@@ -148,8 +148,12 @@
   },
   "active": "0910bd5aee96e0ed",
   "lastOpenFiles": [
-    "Base/English/Words/17.01.raw/whisper.md",
+    "Base/Books/Игра Эндера.md",
+    "Base/Books/Сияние.md",
+    "Templates/Book template.md",
+    "Templates/English phrase.md",
     "Base/English/Phrases/In and of itself.md",
+    "Base/English/Words/17.01.raw/whisper.md",
     "Base/English/Words/understatement.md",
     "Base/English/Words/tittle-tattle.md",
     "Base/English/Words/silence.md",
@@ -170,11 +174,7 @@
     "Base/English/Words/competition.md",
     "Base/English/Words/chinwag.md",
     "Base/English/Phrases/And then some.md",
-    "Templates/English phrase.md",
     "Templates/English word.md",
-    "Templates/Book template.md",
-    "Base/English/Phrases/To give smth a try.md",
-    "Base/English/Phrases/That's the spirit.md",
     "Base/Books",
     "Base/English/Words/Raw",
     "Templates",
