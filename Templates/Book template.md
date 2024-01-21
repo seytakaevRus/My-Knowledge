@@ -3,7 +3,8 @@ tags:
   - book
 partOfSeries: false
 genre: 
-rating:
+rating: 
+author:
 ---
 ## Description
 
