@@ -1,19 +1,19 @@
 {
   "main": {
-    "id": "c9998cc56ee4f35c",
+    "id": "1f8663a57fee5483",
     "type": "split",
     "children": [
       {
-        "id": "4301e2bd6939955a",
+        "id": "2b930a0474981773",
         "type": "tabs",
         "children": [
           {
-            "id": "0910bd5aee96e0ed",
+            "id": "0bf4809395df1368",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Base/Books/Сияние.md",
+                "file": "Base/Self-Development/15 секретов управления временем. Как успешные люди успевают все..md",
                 "mode": "source",
                 "source": false
               }
@@ -25,15 +25,15 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "760cddbe97e68127",
+    "id": "307d616ce6a4b782",
     "type": "split",
     "children": [
       {
-        "id": "778aadc5d1b84fc2",
+        "id": "41ccbd02310d8e5c",
         "type": "tabs",
         "children": [
           {
-            "id": "932c12678ed47acc",
+            "id": "d85a4c666a43a58e",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -43,7 +43,7 @@
             }
           },
           {
-            "id": "116ad111c94e4ac6",
+            "id": "772dccf0eb00763f",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -58,7 +58,7 @@
             }
           },
           {
-            "id": "fc789c98779f5b60",
+            "id": "4b3f02fd29349d34",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -69,23 +69,24 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
-    "id": "07326318166fe033",
+    "id": "38c3de761163f663",
     "type": "split",
     "children": [
       {
-        "id": "532485509ca0a01e",
+        "id": "ff8a4534bcb473b4",
         "type": "tabs",
         "children": [
           {
-            "id": "5f1ed91b18aac6ec",
+            "id": "1550bc5fad161399",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Base/Books/Сияние.md",
+                "file": "Base/Self-Development/15 секретов управления временем. Как успешные люди успевают все..md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -97,19 +98,19 @@
             }
           },
           {
-            "id": "64e15a7e89038750",
+            "id": "79a914916c29ad7d",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Base/Books/Сияние.md",
+                "file": "Base/Self-Development/15 секретов управления временем. Как успешные люди успевают все..md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
             }
           },
           {
-            "id": "1ab575838ceb68e3",
+            "id": "9eda4fa6dd9ca252",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -120,12 +121,12 @@
             }
           },
           {
-            "id": "2cfb7c790da0ba59",
+            "id": "f55d134f3dc2f04f",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
-                "file": "Base/Books/Сияние.md"
+                "file": "Base/Self-Development/15 секретов управления временем. Как успешные люди успевают все..md"
               }
             }
           }
@@ -146,41 +147,43 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "0910bd5aee96e0ed",
+  "active": "0bf4809395df1368",
   "lastOpenFiles": [
-    "Base/Books/Игра Эндера.md",
-    "Base/Books/Сияние.md",
-    "Templates/Book template.md",
-    "Templates/English phrase.md",
-    "Base/English/Phrases/In and of itself.md",
+    "Base/English/Words/keen.md",
+    "Base/Self-Development/15 секретов управления временем. Как успешные люди успевают все..md",
+    "Base/Self-Development",
+    "Base/English/Words/overstatement.md",
+    "Base/English/Words/maze.md",
+    "Base/English/Words/emphasise.md",
+    "Base/English/Words/17.01.raw/pot.md",
     "Base/English/Words/17.01.raw/whisper.md",
-    "Base/English/Words/understatement.md",
+    "Base/English/Words/17.01.raw/evidence.md",
+    "Base/English/Words/17.01.raw/distort.md",
+    "Base/English/Words/17.01.raw",
+    "Base/English/Phrases/In and of itself.md",
+    "Base/English/Phrases/And then some.md",
+    "Base/Books/Сияние.md",
+    "conflict-files-obsidian-git.md",
     "Base/English/Words/tittle-tattle.md",
     "Base/English/Words/silence.md",
-    "Base/English/Words/reveal.md",
-    "Base/English/Words/reply.md",
     "Base/English/Words/persist.md",
-    "Base/English/Words/17.01.raw/pot.md",
-    "Base/English/Words/perceive.md",
-    "Base/English/Words/overstatement.md",
-    "Base/English/Words/keen.md",
-    "Base/English/Words/17.01.raw/evidence.md",
-    "Base/English/Words/17.01.raw",
-    "Base/English/Words/maze.md",
-    "Base/English/Words/encourage.md",
-    "Base/English/Words/emphasise.md",
-    "Base/English/Words/17.01.raw/distort.md",
-    "Base/English/Words/conscious.md",
-    "Base/English/Words/competition.md",
-    "Base/English/Words/chinwag.md",
-    "Base/English/Phrases/And then some.md",
-    "Templates/English word.md",
-    "Base/Books",
+    "Base/English/Words/Raw/recap.md",
+    "Base/English/Words/Raw/gossip.md",
+    "Base/English/Words/Raw/confidence.md",
+    "Base/English/Words/Raw/drown.md",
+    "Base/English/Words/Raw/forcefully.md",
     "Base/English/Words/Raw",
-    "Templates",
-    "Base/English/Words",
+    "Base/English/Words/conscious.md",
+    "Base/English/Words/understatement.md",
+    "Base/English/Words/competition.md",
+    "Base/English/Words/encourage.md",
+    "Base/English/Words/enrich.md",
+    "Base/Books",
     "Base/English/Phrases",
+    "Base/English/Words",
     "Base/English",
+    "Templates",
+    "Files",
     "Base"
   ]
 }
