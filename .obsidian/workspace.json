@@ -4,16 +4,16 @@
     "type": "split",
     "children": [
       {
-        "id": "2b930a0474981773",
+        "id": "5d72d23e8b831236",
         "type": "tabs",
         "children": [
           {
-            "id": "0bf4809395df1368",
+            "id": "1924b1f2941c4d72",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Base/Self-Development/15 секретов управления временем. Как успешные люди успевают все..md",
+                "file": "Base/English/Words/understatement.md",
                 "mode": "source",
                 "source": false
               }
@@ -69,8 +69,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
     "id": "38c3de761163f663",
@@ -86,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Base/Self-Development/15 секретов управления временем. Как успешные люди успевают все..md",
+                "file": "Base/English/Words/understatement.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -103,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Base/Self-Development/15 секретов управления временем. Как успешные люди успевают все..md",
+                "file": "Base/English/Words/understatement.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Base/Self-Development/15 секретов управления временем. Как успешные люди успевают все..md"
+                "file": "Base/English/Words/understatement.md"
               }
             }
           }
@@ -147,43 +146,43 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "0bf4809395df1368",
+  "active": "1924b1f2941c4d72",
   "lastOpenFiles": [
-    "Base/English/Words/keen.md",
-    "Base/Self-Development/15 секретов управления временем. Как успешные люди успевают все..md",
-    "Base/Self-Development",
-    "Base/English/Words/overstatement.md",
-    "Base/English/Words/maze.md",
-    "Base/English/Words/emphasise.md",
-    "Base/English/Words/17.01.raw/pot.md",
-    "Base/English/Words/17.01.raw/whisper.md",
-    "Base/English/Words/17.01.raw/evidence.md",
-    "Base/English/Words/17.01.raw/distort.md",
-    "Base/English/Words/17.01.raw",
-    "Base/English/Phrases/In and of itself.md",
-    "Base/English/Phrases/And then some.md",
-    "Base/Books/Сияние.md",
-    "conflict-files-obsidian-git.md",
-    "Base/English/Words/tittle-tattle.md",
-    "Base/English/Words/silence.md",
+    "Base/English/Words/reveal.md",
+    "Base/English/Words/reply.md",
     "Base/English/Words/persist.md",
-    "Base/English/Words/Raw/recap.md",
-    "Base/English/Words/Raw/gossip.md",
-    "Base/English/Words/Raw/confidence.md",
-    "Base/English/Words/Raw/drown.md",
-    "Base/English/Words/Raw/forcefully.md",
-    "Base/English/Words/Raw",
-    "Base/English/Words/conscious.md",
-    "Base/English/Words/understatement.md",
-    "Base/English/Words/competition.md",
-    "Base/English/Words/encourage.md",
+    "Base/English/Words/perceive.md",
+    "Base/English/Words/overstatement.md",
+    "Base/English/Words/occasion.md",
+    "Base/English/Words/maze.md",
+    "Base/English/Words/keen.md",
+    "Base/English/Words/graze.md",
     "Base/English/Words/enrich.md",
+    "Base/English/Words/encourage.md",
+    "Base/English/Words/conscious.md",
+    "Base/English/Words/competition.md",
+    "Base/English/Words/28.01.raw/estimate.md",
+    "Templates/English word.md",
+    "Base/English/Words/silence.md",
+    "Base/English/Words/28.01.raw/disease.md",
+    "Base/English/Words/28.01.raw/whereas.md",
+    "Base/English/Words/28.01.raw/implies.md",
+    "Base/English/Words/28.01.raw/attends.md",
+    "Base/English/Words/28.01.raw/emerging.md",
+    "Base/English/Words/28.01.raw/throughout.md",
+    "Base/English/Words/28.01.raw/beyond.md",
+    "Base/English/Words/28.01.raw/either.md",
+    "Base/English/Rules/How to create English sentences in question forms.md",
+    "Base/English/Words/Untitled.md",
+    "Base/English/Words/28.01.raw",
+    "Base/English/Rules",
+    "Base/Self-Development",
+    "Base/English/Words/17.01.raw",
+    "Base/English/Words/Raw",
     "Base/Books",
     "Base/English/Phrases",
     "Base/English/Words",
     "Base/English",
-    "Templates",
-    "Files",
-    "Base"
+    "Templates"
   ]
 }
