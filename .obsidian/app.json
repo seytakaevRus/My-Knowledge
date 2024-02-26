@@ -2,5 +2,6 @@
   "newFileLocation": "folder",
   "newFileFolderPath": "Base",
   "attachmentFolderPath": "Files",
-  "promptDelete": false
+  "promptDelete": false,
+  "alwaysUpdateLinks": true
 }
