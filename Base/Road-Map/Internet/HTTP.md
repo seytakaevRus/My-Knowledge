@@ -1,6 +1,11 @@
 ---
 tags:
   - roadmap
+refs:
+  - https://cs.fyi/guide/http-in-depth
+  - https://www.youtube.com/watch?v=T_4xgLUJFF0
+date: 2024-03-01
+author: Ruslan Seit-Akaev
 ---
 ## Что такое HTTP
 

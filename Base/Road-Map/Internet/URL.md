@@ -1,6 +1,10 @@
 ---
 tags:
   - roadmap
+refs:
+  - https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL
+date: 2024-03-01
+author: Ruslan Seit-Akaev
 ---
 `URL (Uniform Resource Locator)` - механизм, которые используют браузеры для получения любого публичного ресурса на странице.
 

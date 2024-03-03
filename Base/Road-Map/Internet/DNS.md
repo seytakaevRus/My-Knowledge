@@ -1,6 +1,11 @@
 ---
 tags:
   - roadmap
+refs:
+  - https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_domain_name
+  - https://www.cloudflare.com/en-gb/learning/dns/what-is-dns/
+date: 2024-03-01
+author: Ruslan Seit-Akaev
 ---
 `Доменное имя` - строка текста, которая сопоставляется с `IP-адресом`. Также это текст, который пользователь вводит в строку браузера, чтобы достичь определенного веб-сайта. 
 
