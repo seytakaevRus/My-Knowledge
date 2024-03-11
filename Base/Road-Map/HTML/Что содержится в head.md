@@ -1,8 +1,9 @@
 ---
 tags:
   - roadmap
-refs: 
-date: 
+refs:
+  - https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/The_head_metadata_in_HTML
+date: 2024-03-09
 author: Ruslan Seit-Akaev
 ---
 `<head>`- часть HTML, которая не отображается в веб-браузере. Она содержит информацию о странице такую как название страницы, стили CSS, ссылки на иконки и другие метаданные.
