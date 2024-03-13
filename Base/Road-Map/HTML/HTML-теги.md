@@ -13,6 +13,10 @@ author: Ruslan Seit-Akaev
 - Если нужна семантика, то используем `HTML`;
 - Если использование тега не создает доп. проблем, например, не те стили, то используем `HTML`;
 - В иных случаях используем `CSS`.
+
+## Ссылка на упражнение по базовым тегам
+
+https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/Marking_up_a_letter
 ## Текст
 ### `<p>` Параграф
 
