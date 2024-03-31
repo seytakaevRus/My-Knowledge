@@ -44,6 +44,6 @@ fetch(resource, options);
 - `headers`
 Любые заголовки, которые будут добавлены к запросу;
 - `integrity`
-TODO: прочитать про `integrity`;
+[[Целостность подресурса]]
 - 
 
