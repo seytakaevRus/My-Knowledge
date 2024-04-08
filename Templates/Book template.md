@@ -6,31 +6,13 @@ genre:
 rating: 
 author:
 ---
-## Description
+## Описание
 
 ```
 ```
 
 ---
-## Opinion
-
-```
-```
-
----
-## Reviews
-
-### Review 1 ()
-
-```
-```
-
-### Review 2 ()
-
-```
-```
-
-### Review 3 ()
+## Мое мнение
 
 ```
 ```
