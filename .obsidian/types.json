@@ -6,6 +6,7 @@
     "partOfSeries": "checkbox",
     "rating": "number",
     "refs": "multitext",
-    "date": "date"
+    "date": "date",
+    "topics": "multitext"
   }
 }
