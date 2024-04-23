@@ -10,4 +10,4 @@ https://coggle.it/diagram/W5E5tqYlrXvFJPsq/t/master-the-interview-click-here-for
 
 [[Сложность по времени и по памяти]]
 [[Советы по решению задач]]
-[[Массив]]
+[[Array]]
