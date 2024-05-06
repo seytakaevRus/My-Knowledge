@@ -1,7 +1,6 @@
 ---
 tags:
   - leetcode
-  - roadmap
 date: 2024-04-14
 author: Ruslan Seit-Akaev
 ---
