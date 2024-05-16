@@ -1,7 +1,7 @@
 ---
 tags:
   - leetcode
-  - mechanic
+  - technique
 ---
 ## Описание
 
