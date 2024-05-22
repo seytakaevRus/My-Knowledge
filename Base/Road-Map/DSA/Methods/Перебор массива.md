@@ -1,7 +1,7 @@
 ---
 tags:
   - leetcode
-  - methods
+  - recipes
 ---
 ## Описание
 
