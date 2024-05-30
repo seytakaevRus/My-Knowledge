@@ -19,7 +19,7 @@ const getTaskLabelByItLevel = (dv, level) => {
 }
 
 const utils = {
-  // getTaskColorByItLevel,
+  getTaskColorByItLevel,
   getTaskLabelByItLevel,
 };
 
