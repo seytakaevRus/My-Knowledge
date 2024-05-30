@@ -1,0 +1,19 @@
+.task {
+  background-color: #ffffff1a;
+  font-size: 12px;
+  line-height: 16px;
+  padding: 4px 8px;
+  border-radius: 9999px;
+}
+
+.task_easy {
+  color: #46c6c2;
+}
+
+.task_medium {
+  color: #fac31d;
+}
+
+.task_hard {
+  color: #f8615c;
+}
