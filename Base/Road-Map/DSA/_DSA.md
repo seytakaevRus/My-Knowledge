@@ -11,6 +11,10 @@ https://coggle.it/diagram/W5E5tqYlrXvFJPsq/t/master-the-interview-click-here-for
 https://github.com/doocs/leetcode/tree/main/solution
 https://leetcode.ca/all/problems.html
 
+## Нужно прорешать задачи от сюда
+
+https://takeuforward.org/interviews/strivers-sde-sheet-top-coding-interview-problems/
+https://neetcode.io/roadmap
 ## Оглавление
 ### Базовая информация
 
