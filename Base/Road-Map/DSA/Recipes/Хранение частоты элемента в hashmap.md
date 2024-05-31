@@ -1,7 +1,7 @@
 TODO: Доделать заметку
 
 ```typescript
-const incrementElementFrequencyInMap = <K>(element: K, map: Map<K, number>): void => {
+const incrementElementFrequencyInMap = <K>(map: Map<K, number>, element: K): void => {
   if (!map.has(element)) {
     map.set(element, 0);
   }
@@ -9,7 +9,7 @@ const incrementElementFrequencyInMap = <K>(element: K, map: Map<K, number>): voi
   map.set(element, map.get(element)! + 1);
 }
 
-const decrementElementFrequencyInMap = <K>(element: K, map: Map<K, number>): void => {
+const decrementElementFrequencyInMap = <K>(map: Map<K, number>, element: K): void => {
   map.set(element, map.get(element)! - 1);
 
   if (map.get(element) === 0) {
