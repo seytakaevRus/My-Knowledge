@@ -6,8 +6,13 @@ const getTaskLabelByItLevel = (dv, level) => {
   return element;
 }
 
+const getPathFromRootToTasksFolder = () => {
+  return '"Base/Road-Map/DSA/Tasks';
+}
+
 const utils = {
   getTaskLabelByItLevel,
+  getPathFromRootToTasksFolder,
 };
 
 exports.utils = utils;
