@@ -1,7 +1,7 @@
 ---
 tags:
   - leetcode
-date: 2024-04-14
+date: 2024-06-06
 author: Ruslan Seit-Akaev
 ---
 ## Описание
