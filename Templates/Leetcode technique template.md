@@ -22,14 +22,11 @@ tags:
 ## Задачи, с применением техники
 
 ```dataviewjs
-const currentFileName = dv.current().file.name;
+const { utils } = require(app.vault.adapter.basePath + "/Files/JS/dataviewUtils.js");
 
-dv.table(["Task"], dv.pages('#leetcode')
-	.filter(entity => {
-		const linkArray = dv.array(entity.file.outlinks.values);
-		return linkArray.some(link => link.path.includes(currentFileName));
-	})
-	.map(entity => {
-		return [entity.file.link];
-	}));
+const {
+  renderTasksTable,
+} = utils;
+
+renderTasksTable(dv, ["Tasks", "Level", "Recommended", "Topics"]);
 ```

@@ -32,21 +32,21 @@ const array = [1, 6, 3, 10, 5];
 ### Получение длины `O(1)`
 
 ```typescript
-console.log(array.length);
+array.length;
 ```
 ### Получение по индексу `O(1)`
 
 ```typescript
-console.log(array[0]);
-console.log(array[2]);
-console.log(array[5]);
+array[0];
+array[2];
+array[5];
 ```
 
 ### Поиск элемента по значению `O(n)`
 
 ```typescript
 for (let i = 0; i < array.length; i += 1) {
-  console.log(array[i]);    
+  array[i];    
 }
 ```
 ### Удаление элемента с конца / Добавление элемента в конец `O(1)`
