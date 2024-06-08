@@ -22,6 +22,20 @@ author: Ruslan Seit-Akaev
 Но в `JavaScript` массивы динамические, да и размер не нужно указывать заранее.
 
 ---
+## Особенности
+
+## Плюсы
+
+- быстрый поиск по индексу;
+- быстрое добавление/удаление в конец/с конца;
+- элементы имеют порядок;
+### Минусы
+
+- медленное добавление;
+- медленное удаление;
+- медленный поиск по значению;
+
+---
 ## Операции над массивом
 
 ### Создание
@@ -147,6 +161,75 @@ const cycleShiftElementsToLeft = (arr: number[]): void => {
 
   arr[arr.length - 1] = first;
 };
+```
+
+---
+## Реализация
+
+```typescript
+class MyArray {
+  length: number;
+  data: Record<number, unknown>;
+
+  constructor() {
+    this.length = 0;
+    this.data = {};
+  }
+
+  // O(1) time
+  get(index: number) {
+    return this.data[index];
+  }
+
+  // O(1) time
+  push(item: unknown) {
+    this.data[this.length] = item;
+    this.length += 1;
+
+    return this.length;
+  }
+
+  // O(1) time
+  pop() {
+    const lastItem = this.data[this.length - 1];
+
+    delete this.data[this.length - 1];
+    this.length -= 1;
+
+    return lastItem;
+  }
+
+  // O(n) time
+  delete(index: number) {
+    const item = this.data[index];
+
+    this.shiftItems(index);
+
+    return item;
+  }
+
+  // O(n) time
+  shiftItems(index: number) {
+    for (let i = index; i < this.length - 1; i++) {
+      this.data[i] = this.data[i + 1];
+    }
+
+    delete this.data[this.length - 1];
+    this.length -= 1;
+  }
+}
+
+const newArray = new MyArray();
+
+newArray.push("hi");
+newArray.push("you");
+newArray.push("!");
+
+newArray.pop();
+
+newArray.delete(1);
+
+console.log(newArray);
 ```
 
 ---
