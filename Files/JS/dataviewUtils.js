@@ -13,7 +13,7 @@ const getPathFromRootToTasksFolder = () => {
 const renderTasksTable = (dv, columns) => {
   const columnsMap = new Map();
   const pathToTasksFolder = getPathFromRootToTasksFolder();
-  const currentFileName = dv.current().file.name.toLowerCase();
+  const currentFileName = dv.current().file.name;
 
   columns.forEach((value) => {
     columnsMap.set(value.toLowerCase(), true);
@@ -25,6 +25,10 @@ const renderTasksTable = (dv, columns) => {
       .pages(`"${pathToTasksFolder}"`)
       .filter((entity) => {
         const linkArray = dv.array(entity.file.outlinks.values);
+
+        debugger;
+
+        console.log(linkArray.some)
 
         return linkArray.some((link) => link.path.includes(currentFileName));
       })

@@ -47,7 +47,7 @@ const hashMap = {
 
 const map = new Map([['a', 0], ['c', 15], ['r', 8], ['z', 'sock']]);
 ```
-### Добавление ключа `O(1)`
+### Добавление ключа `O(1)`/`O(n)` при коллизиях
 
 ```typescript
 hashMap.key = 'value';
@@ -55,7 +55,7 @@ hashMap['key'] = 'value';
 
 map.set('key', 'value');
 ```
-### Поиск элемента по ключу `O(1)`
+### Поиск элемента по ключу `O(1)`/`O(n)` при коллизиях
 
 ```typescript
 hashMap.key;
@@ -63,7 +63,7 @@ hashMap['key'];
 
 map.get('key');
 ```
-### Удаление элемента по ключу `O(1)`
+### Удаление элемента по ключу `O(1)`/`O(n)` при коллизиях
 
 ```typescript
 // delete рекомендуется не использовать, так как он делает обращаение с объектом медленным.
@@ -71,6 +71,83 @@ hashMap.key = null;
 hashMap['key'] = null;
 
 map.delete('key');
+```
+
+---
+
+## Реализация
+
+Имплементация `хеш-таблицы` в качестве класса.
+
+```typescript
+class HashTable {
+  data: [key?: string, value?: unknown][][];
+
+  constructor(size: number) {
+    this.data = new Array(size);
+  }
+
+  // O(1) time
+  _hash(key: string): number {
+    let hash = 0;
+
+    for (let i = 0; i < key.length; i++) {
+      hash = (hash + key.charCodeAt(i) * i) % this.data.length;
+    }
+
+    return hash;
+  }
+
+  // O(n) time
+  get(key: string): unknown {
+    const index = this._hash(key);
+    const bucket = this.data[index];
+
+    for (const [bucketKey, bucketValue] of bucket) {
+      if (key === bucketKey) {
+        return bucketValue;
+      }
+    }
+  }
+
+  // O(1) time
+  set(key: string, value: unknown): typeof this.data {
+    const index = this._hash(key);
+
+    if (this.data[index] === undefined) {
+      this.data[index] = [];
+    }
+
+    this.data[index].push([key, value]);
+
+    return this.data;
+  }
+
+  // O(n * k) time
+  keys(): string[] {
+    const keys: string[] = [];
+
+    for (const bucket of this.data) {
+      if (bucket === undefined) continue;
+      
+      for (const [key] of bucket) {
+        keys.push(key!);
+      }
+    }
+
+    return keys;
+  }
+}
+
+const myHashTable = new HashTable(50);
+myHashTable.set("grapes", 10000);
+myHashTable.get("grapes");
+myHashTable.set("apples", 9);
+myHashTable.get("apples");
+myHashTable.set("1234s22416426rfy7uggrgol;[sa,pk3", 123084578);
+myHashTable.get("1234s22416426rfy7uggrgol;[sa,pk3");
+
+console.log(myHashTable.keys());
 ```
 
 ---
