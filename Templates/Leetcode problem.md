@@ -53,42 +53,7 @@ recommended:
 ## Решение 1
 
 ```typescript
-const productExceptSelf = (nums: number[]): number[] => {
-  const output = [];
 
-  let productExceptZero = 1;
-  let countOfZeros = 0;
-
-  nums.forEach((value) => {
-    if (value !== 0) {
-      productExceptZero *= value;
-    } else {
-      countOfZeros += 1;
-    }
-  });
-
-  for (let i = 0; i < nums.length; i += 1) {
-    if (countOfZeros === 1) {
-      if (nums[i] !== 0) {
-        output.push(0);
-      } else {
-        output.push(productExceptZero);
-      }
-    } else if (countOfZeros > 1) {
-      output.push(0);
-    } else {
-      if (i > 0) {
-        productExceptZero *= nums[i - 1]
-      }
-
-      productExceptZero /= nums[i];
-
-      output.push(productExceptZero);
-    }
-  }
-
-  return output;
-};
 ```
 
 Сложность по времени: `O()`.
