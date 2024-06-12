@@ -240,9 +240,7 @@ TODO: Написать про операции на месте.
 ---
 ## Нужно решить
 
-1. (347) https://leetcode.com/problems/top-k-frequent-elements/description/
 3. https://leetcode.com/problems/encode-and-decode-strings/description/
-4. (238) https://leetcode.com/problems/product-of-array-except-self/description/
 5. (128) https://leetcode.com/problems/longest-consecutive-sequence/description/
 
 ---
