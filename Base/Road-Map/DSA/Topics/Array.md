@@ -241,7 +241,6 @@ TODO: Написать про операции на месте.
 ## Нужно решить
 
 3. https://leetcode.com/problems/encode-and-decode-strings/description/
-5. (128) https://leetcode.com/problems/longest-consecutive-sequence/description/
 
 ---
 ## Задачи
