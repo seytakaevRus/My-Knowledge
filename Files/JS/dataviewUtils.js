@@ -26,10 +26,6 @@ const renderTasksTable = (dv, columns) => {
       .filter((entity) => {
         const linkArray = dv.array(entity.file.outlinks.values);
 
-        debugger;
-
-        console.log(linkArray.some)
-
         return linkArray.some((link) => link.path.includes(currentFileName));
       })
       .map((entity) => {
