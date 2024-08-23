@@ -249,6 +249,12 @@ TODO: Написать про операции на месте.
 3. https://leetcode.com/problems/encode-and-decode-strings/description/
 
 ---
+
+## Первая не решенная задача, с большего `Acceptance` к меньшему
+
+https://leetcode.com/problems/minimum-number-of-moves-to-seat-everyone/description/
+
+---
 ## Задачи
 
 ```dataviewjs

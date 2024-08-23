@@ -638,6 +638,11 @@ class MyHashMap {
 ## Техники
 
 ---
+## Первая не решенная задача, с большего `Acceptance` к меньшему
+
+https://leetcode.com/problems/find-the-number-of-good-pairs-i/
+
+---
 ## Задачи
 
 ```dataviewjs
