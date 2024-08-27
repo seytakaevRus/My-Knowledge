@@ -252,7 +252,7 @@ TODO: Написать про операции на месте.
 
 ## Первая не решенная задача, с большего `Acceptance` к меньшему
 
-https://leetcode.com/problems/running-sum-of-1d-array/
+https://leetcode.com/problems/count-houses-in-a-circular-street/description/
 
 ---
 ## Задачи
