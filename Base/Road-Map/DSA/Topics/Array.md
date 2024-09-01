@@ -246,7 +246,7 @@ TODO: Написать про операции на месте.
 ---
 ## Нужно решить
 
-3. https://leetcode.com/problems/encode-and-decode-strings/description/
+3. https://leetcode.com/problems/find-the-highest-altitude/description/
 
 ---
 
