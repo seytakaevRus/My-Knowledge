@@ -5,5 +5,11 @@
   "promptDelete": false,
   "alwaysUpdateLinks": true,
   "tabSize": 2,
-  "useTab": false
+  "useTab": false,
+  "pdfExportSettings": {
+    "pageSize": "Letter",
+    "landscape": false,
+    "margin": "0",
+    "downscalePercent": 100
+  }
 }
