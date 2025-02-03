@@ -25,11 +25,274 @@ TODO:
 
 При поочерёдном сравнении элементов из двух деревьев алгоритм придерживается следующих правил:
 
-1. Элементы сравниваются по ссылке, если ссылка одна и та же, значит этот элемент и все элементы ниже можно не трогать (ссылку на элемент можно сделать одинаковой при помощи `useMemo` TODO: Вставить ссылку на мемоизацию);
+1. Элементы сравниваются по ссылке, если ссылка одна и та же, значит этот элемент и все элементы ниже можно не трогать (ссылку на элемент можно сделать одинаковой при помощи `useMemo` [[React_deep_dive#`memo` и компонент в `children`|посмотреть]]);
 2. Если ссылки разные, то `React` смотрим на [[Элементы и компоненты#Подробнее о `type`|type]] этих элементов:
-    - Если `type` у элементов не совпадает (по ссылке или по значению), то предыдущий элемент, а также все его дочерние элементы удаляются, а новый элемент и его дочерние элементы добавляются (TODO: Вставить про анти-паттерн создание компонента внутри компонента);
+    - Если `type` у элементов не совпадает (по ссылке или по значению), то предыдущий элемент, а также все его дочерние элементы удаляются, а новый элемент и его дочерние элементы добавляются;
     - Если `type` у элементов совпадает (по ссылке и значению), то к текущему элементу будет применены новые изменения (если они есть);
-    - Для списков `React` использует пропс `key` (TODO: Оставить ссылку на него).
+    - Для списков `React` использует пропс [[Reconciliation#`key`|key]].
 
 
-TODO: Перенести все примеры с type сюда
+Понимание алгоритма сравнения `React` позволяет решить неочевидные баги и уменьшить количество ререндеров компонентов. Ниже приведены примеры, подтверждающие алгоритм ниже.
+
+#### Разный `type`
+
+##### Два `React DOM` элемента
+
+В примере ниже, если в инпут ввести текст, а затем включить и включить чекбокс, чтобы инпут появился заново, то текст пропадёт. Почему?
+
+```js
+const Form = () => {
+  const [checked, setChecked] = useState(false);
+
+  const handleChange = () => {
+    setChecked(!checked);
+  };
+
+  return (
+    <>
+      <input type="checkbox" checked={checked} onChange={handleChange} />
+      
+      {checked ? (
+        <input id="company-tax-id-number" placeholder="Enter you company ID" />
+      ) : (
+        <span>PlaceHolder</span>
+      )}
+    </>
+  );
+};
+```
+
+Благодаря [[Reconciliation#Процесс сравнение|алгоритму]] выше становится ясно, что при `checked` равным `true` должен показываться `input`, который преобразуется в:
+
+```js
+{
+  type: "input",
+}
+```
+
+А при `checked` равным `false` должен показываться `span`, который преобразуется в:
+
+```js
+{
+  type: "span",
+}
+```
+
+Поэтому при очередном вызове `useState`  идёт сравнение предыдущего `type` и следующего, а раз они разные, то предыдущий размонтируется, а следующий монтируется.
+
+##### `React DOM` элемент и пользовательский элемент
+
+Такая же история будет и здесь.
+
+```js
+const Input = ({ id, placeholder }) => {
+  return <input id={id} placeholder={placeholder} />;
+};
+
+const Form = () => {
+  const [checked, setChecked] = useState(false);
+
+  const handleChange = () => {
+    setChecked(!checked);
+  };
+
+  return (
+    <>
+      <input type="checkbox" checked={checked} onChange={handleChange} />
+
+      {checked ? (
+        <input id="company-tax-id-number" placeholder="Enter you company ID" />
+      ) : (
+        <Input
+          id="person-tax-id-number"
+          placeholder="Enter you personal Tax ID"
+        />
+      )}
+    </>
+  );
+};
+```
+
+При `checked` равным `true`:
+
+```js
+{
+  type: "input",
+}
+```
+
+При `cheked` равным `false`:
+
+```js
+{
+  type: Input,
+}
+```
+
+`type` не совпадает, поэтому предыдущий размонтируется, следующий монтируется.
+
+##### Анти-паттерн компонент внутри компонента
+
+Хук `useUpdateComponentEverySecond` вызывает обновление компонента `Form` каждую секунду, каждый ререндер создаётся новый компонент `Input`, поэтому при сравнении `React` получается `{ type: Input }` и `{ type: Input }`, но ссылки на `Input` разные, поэтому один компонент он удаляет, а второй добавляет.
+
+```js
+const Form = () => {
+  useUpdateComponentEverySecond();
+
+  const Input = ({ id }) => {
+    console.log("Rerender");
+
+    useEffect(() => {
+      console.log("Mount");
+
+      return () => {
+        console.log("Unmount");
+      };
+    }, []);
+
+    return <input id="id" />;
+  };
+
+  return <Input id="id" />;
+};
+```
+
+#### Одинаковый `type`
+
+Будь-то два `React DOM` элемента или два пользовательских элемента, то при одинаковых `type` произойдёт обновление компонента, проще обновить компонент, чем создавать его заново. Поэтому текст сохраняется при переключении чекбокса.
+
+```js
+const Form = () => {
+  const [checked, setChecked] = useState(false);
+
+  const handleChange = () => {
+    setChecked(!checked);
+  };
+
+  return (
+    <>
+      <input type="checkbox" checked={checked} onChange={handleChange} />
+
+      {checked ? (
+        <input id="company-tax-id-number" placeholder="Enter you company ID" />
+      ) : (
+        <input
+          id="person-tax-id-number"
+          placeholder="Enter you personal Tax ID"
+        />
+      )}
+    </>
+  );
+};
+```
+
+Кстати, если не нужно, чтобы при переключении сбрасывались данные внутри элемента, то можно воспользоваться двумя способами:
+
+1. [[Reconciliation#^c94a07|Использование условной отрисовки]];
+2. [[Reconciliation#Для сброса состояния элемента|Использование пропса key]]
+
+#### Сравнение массива с элементами, где `type` разный
+
+В этос случае процесс не отличается от сравнение одного элемента. Если взять пример выше, то мы получим два массива.
+
+До обновления `useState` (`checked` равный `false`):
+
+```js
+[
+  {
+    type: "input",
+  },
+  {
+    type: "input",
+  },
+]
+```
+
+И после обновления `useState` (`checked` равный `true`):
+
+```js
+[
+  {
+    type: "input",
+  },
+  {
+    type: "input",
+  },
+]
+```
+
+^Если переписать пример выше на два условных рендера, то поведение будет другое.  ^c94a07
+
+```js
+const Form = () => {
+  const [checked, setChecked] = useState(false);
+
+  const handleChange = () => {
+    setChecked(!checked);
+  };
+
+  return (
+    <>
+      <input type="checkbox" checked={checked} onChange={handleChange} />
+
+      {checked ? (
+        <input id="company-tax-id-number" placeholder="Enter you company ID" />
+      ) : null}
+      {checked ? null : (
+        <input
+          id="person-tax-id-number"
+          placeholder="Enter you personal Tax ID"
+        />
+      )}
+    </>
+  );
+};
+```
+
+То при `checked` равный `false` получим:
+
+```js
+[
+  {
+    type: "input",
+  },
+  {
+    type: "input",
+  },
+  null,
+]
+```
+
+А при `true`:
+
+```js
+[
+  {
+    type: "input",
+  },
+  null,
+  {
+    type: "input",
+  },
+]
+```
+
+Один из инпутов удалится, а второй добавится, поэтому и сбросятся данные, связанные с элементом.
+
+#### `key`
+
+Пропс `key` может применяться в двух случаях:
+
+1. Для элементов в массиве данных;
+2. Для сброса состояния элемента.
+
+##### Для элементов в массиве данных
+
+Есть массив `data` и по нему создаётся массив элементов.
+
+```js
+
+```
+
+##### Для сброса состояния элемента
+
