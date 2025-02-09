@@ -303,5 +303,115 @@ const Component = () => {
 };
 ```
 
-Этого можно избежать через разделение контекста. Один будет отвечать за хранение информации о видимости сайдбара, а второй за хранение методов для работы с ним.
+Этого можно избежать через разделение контекста. Один будет отвечать за хранение информации о видимости сайдбара, а второй за хранение методов для работы с видимостью.
 
+Создаём новый контекст и хук его использования.
+
+```js
+const NavApiContext = createContext({
+  open: () => {},
+  close: () => {},
+  toggle: () => {},
+});
+
+const useNavbarApi = () => useContext(NavApiContext);
+```
+
+Добавляем его в `NavExpandController`.
+
+```js
+const NavExpandController = ({ children }) => {
+  const [isNavExpanded, setIsNavExpanded] = useState(true);
+
+  const data = useMemo(
+    () => ({
+      isNavExpanded,
+    }),
+    [isNavExpanded]
+  );
+
+  const api = useMemo(
+    () => ({
+      open: () => setIsNavExpanded(true),
+      close: () => setIsNavExpanded(false),
+      toggle: () => setIsNavExpanded((prevNavExpanded) => !prevNavExpanded),
+    }),
+    [setIsNavExpanded]
+  );
+
+  return (
+    <NavDataContext.Provider value={data}>
+      <NavApiContext.Provider value={api}>{children}</NavApiContext.Provider>
+    </NavDataContext.Provider>
+  );
+};
+```
+
+Теперь компонент ниже не будет ререндериться, если мы изменим видимость сайдбара, потому что `api` в `NavExpandController` не зависит от `isNavExpanded`.
+
+```js
+const Component = () => {
+  console.log("Component");
+
+  const { open } = useNavbarApi();
+
+  return <div>Component</div>;
+};
+```
+
+#### Использование с `useReducer`
+
+Для случаев, где больше данных и функций можно использовать `useReducer` вместо `useState`.
+
+`useReducer` возвращает массив, где первым элементов будет стейт, а вторым функция `dispatch` (её принято называть так), через которую будет производиться изменение состояния. А принимает `useReducer` функцию `reducer`, где определяется как именно изменяется `state`, и начальное значение `state` как вторым аргументом.
+
+```js
+const NavExpandController = ({ children }) => {
+  console.log("NavExpandController");
+
+  const [state, dispatch] = useReducer(reducer, {
+    isNavExpanded: true,
+  });
+
+  const data = useMemo(
+    () => ({
+      isNavExpanded: state.isNavExpanded,
+    }),
+    [state.isNavExpanded]
+  );
+
+  const api = useMemo(
+    () => ({
+      open: () => dispatch({ type: "open-sidebar" }),
+      close: () => dispatch({ type: "close-sidebar" }),
+      toggle: () => dispatch({ type: "toggle-sidebar" }),
+    }),
+    []
+  );
+
+  return (
+    <NavDataContext.Provider value={data}>
+      <NavApiContext.Provider value={api}>{children}</NavApiContext.Provider>
+    </NavDataContext.Provider>
+  );
+};
+```
+
+А функция `reducer` выглядит так.
+
+```js
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "open-sidebar":
+      return { ...state, isNavExpanded: true };
+    case "close-sidebar":
+      return { ...state, isNavExpanded: false };
+    case "toggle-sidebar":
+      return { ...state, isNavExpanded: !state.isNavExpanded };
+  }
+};
+```
+
+Когда функций и данных, то `useReducer` делает код более чистым. Ещё одним из плюсов такого подхода является то, что `api` теперь не завязаны на `data`, всё, что касается изменений состояния находится внутри `reducer`.
+
+### Имитиация 
