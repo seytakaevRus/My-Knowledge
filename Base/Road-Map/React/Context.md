@@ -355,7 +355,7 @@ const Component = () => {
 
   const { open } = useNavbarApi();
 
-  return <div>Component</div>;
+  return <div onClick={open}>Component</div>;
 };
 ```
 
@@ -414,4 +414,86 @@ const reducer = (state, action) => {
 
 Когда функций и данных, то `useReducer` делает код более чистым. Ещё одним из плюсов такого подхода является то, что `api` теперь не завязаны на `data`, всё, что касается изменений состояния находится внутри `reducer`.
 
-### Имитиация 
+### Использование части контекста без ререндера компонента при изменении value
+
+> Сейчас такой подход вряд ли пригодится, да и выглядит сложно, поэтому лично я бы выбрал [[Context#Уменьшение ненужных ререндеров через разделение контекста|разделение контекстов]], потому что это проще и элегантнее.
+
+Есть достаточный непростой способ сделать через [[HOC]] так, что при использовании части контекста, например, функции `open` в компоненте и при изменении `value` этот компонент не будет перерендерен.
+
+Для этого.  Сохраняем ссылку на `open` через `useCallback`.
+
+```js
+const NavExpandController = ({ children }) => {
+  const [isNavExpanded, setIsNavExpanded] = useState(true);
+
+  const open = useCallback(() => {
+    setIsNavExpanded(true);
+  }, []);
+
+  const data = useMemo(
+    () => ({
+      isNavExpanded,
+      open,
+      close: () => setIsNavExpanded(false),
+      toggle: () => setIsNavExpanded((prevNavExpanded) => !prevNavExpanded),
+    }),
+    [isNavExpanded, open]
+  );
+
+  return (
+    <NavDataContext.Provider value={data}>{children}</NavDataContext.Provider>
+  );
+};
+```
+
+Создаём `HOC` `withOpen` и вызываем его.
+
+```js
+const withOpen = (Component) => {
+  return (props) => {
+    const { open } = useNavbarData();
+
+    return <Component {...props} openNav={open} />
+  }
+}
+
+const Component = withOpen(({ openNav }) => {
+  console.log("Component");
+
+  return <div onClick={openNav}>Component</div>;
+});
+```
+
+В данном случае проблема остаётся той же, чтобы это исправить нужно обернуть `Component` в `memo`.
+
+```js
+const withOpen = (Component) => {
+  const MemoComponent = memo(Component);
+
+  return (props) => {
+    const { open } = useNavbarData();
+
+    return <MemoComponent {...props} openNav={open} />;
+  };
+};
+```
+
+Либо же использовать `useMemo`, но если в `Component` будут переданы какие-то пропсы сверху, то их нужно будет тоже добавить в `useMemo`, иначе `Component` не будет корректно обновлён.
+
+```js
+const withOpen = (Component) => {
+  return (props) => {
+    const { open } = useNavbarData();
+
+    const content = useMemo(() => <Component {...props} openNav={open} />, []);
+
+    return content;
+  };
+};
+```
+
+Теперь если изменять `isNavExpanded`, которое повлечёт за собой изменение `value` у `NavDataContext`, то обновление в `Component` не произойдёт, но почему это работает?
+
+При обновлении `value` будет вызываться функция, которую возвращает `withOpen`. Поэтому без `memo` или `useMemo` передаваемый компонент будет отрендерен. 
+Но при использовании `memo` компонент не ререндерится, если не изменились пропсы, инструкция `{...props}` вытаскивает все пропсы, который передаются в `Component`, а ссылка на `open` всегда одна и та же благодаря `useCallback` в `NavDataContext`.
+А при использовании `useMemo` сохраняется ссылка на компонент, а если до изменения и после ссылка одна и та же, то компонент не ререндерится.
