@@ -202,3 +202,238 @@ useEffect(() => {
 ```
 
 ## Как правильно прокидывать `ref` от родителя к ребёнку
+
+Что если у нас есть компонент `Form`, а в нём компонент `InputField`. Обработка ошибок производится в `Form` и нужно, чтобы при ошибке в `InputField` производился фокус этого инпута. 
+
+```js
+const InputField = ({ onChange }) => {
+  return <input type="text" onChange={onChange} />;
+};
+
+const Form = () => {
+  const [name, setName] = useState("");
+  
+  const onSubmitClick = () => {
+    if (!name) {
+      // deal with empty name
+    } else {
+      // submit the data here!
+    }
+  };
+  return (
+    <>
+      <InputField onChange={setName} />
+
+      <button onClick={onSubmitClick}>Submit the form!</button>
+    </>
+  );
+};
+```
+
+Можно сделать так, через отдельный `useState`, который хранит, когда нужно сфокусировать инупут, и внутри компонента `InputField` сделать это.
+
+```js
+const InputField = ({ isInputFocused, onChange }) => {
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    inputRef.current.focus();
+  }, [isInputFocused]);
+
+  return <input ref={inputRef} type="text" onChange={onChange} />;
+};
+
+const Form = () => {
+  const [name, setName] = useState("");
+  const [isInputFocused, setIsFocused] = useState(false);
+
+  const onSubmitClick = () => {
+    if (!name) {
+      setIsFocused(true);
+      // deal with empty name
+    } else {
+      // submit the data here!
+    }
+  };
+  return (
+    <>
+      <InputField
+        isInputFocused={isInputFocused}
+        onChange={setName}
+      />
+
+      <button onClick={onSubmitClick}>Submit the form!</button>
+    </>
+  );
+};
+```
+
+Но можно сделать это проще. Прокидываем реф через пропс `inputRef`, главное назвать его по-другому.
+
+```js
+const InputField = ({ inputRef, onChange }) => {
+  return <input ref={inputRef} type="text" onChange={onChange} />;
+};
+
+const Form = () => {
+  const [name, setName] = useState("");
+  const inputRef = useRef(null);
+
+  const onSubmitClick = () => {
+    if (!name) {
+      inputRef.current.focus();
+      // deal with empty name
+    } else {
+      // submit the data here!
+    }
+  };
+  return (
+    <>
+      <InputField inputRef={inputRef} onChange={setName} />
+
+      <button onClick={onSubmitClick}>Submit the form!</button>
+    </>
+  );
+};
+```
+
+ Когда были классы, можно было получить ссылку на компонент, если прокинуть в пропс `ref`, в функциональном компоненте, то получим только предупреждение `Function components cannot be given refs. Attempts to access this ref will fail. Did you mean to use React.forwardRef()?`
+
+`forwardRef` принимает компонент и возвращает новый компонент. У нового компонента помимо пропсов есть доступ к рефу, прокинутому сверху.
+
+```js
+const InputField = ({ onChange }, ref) => {
+  return <input ref={ref} type="text" onChange={onChange} />;
+};
+
+const InputWithRef = forwardRef(InputField);
+
+const Form = () => {
+  const [name, setName] = useState("");
+  const inputRef = useRef(null);
+
+  const onSubmitClick = () => {
+    if (!name) {
+      console.log(inputRef);
+      inputRef.current.focus();
+      // deal with empty name
+    } else {
+      // submit the data here!
+    }
+  };
+
+  return (
+    <>
+      <InputWithRef ref={inputRef} onChange={setName} />
+
+      <button onClick={onSubmitClick}>Submit the form!</button>
+    </>
+  );
+};
+```
+
+> Использовать `forwardRef` или прокидывать рефы сверху через пропсы это дело вкуса. По сути результат один и тот же.
+
+## Управление рефом ребёнка в родителе через `useImperativeHandle`
+
+Как мы видели [[Refs#Как правильно прокидывать `ref` от родителя к ребёнку|ранее]] можно определять реф внутри родителя и просто кидать его вниз.
+
+Но разве так правильно, хранить реф, который использует ребёнок внутри родителя, это не его зона ответственности. Было бы здорово, иметь что-то типо `Input.focus()`. Для этого есть хук `useImperativeHandle`, который работает немного запутанно.
+
+Первое, что нам нужно, это два рефа, один который будет работать с `input`, а второй будет работать с хуком. Хук `useImperativeHandle` принимает:
+
+- первым аргументом идёт `ref`, через который будет производиться вызовы методы, объявленные во втором аргументе;
+- вторым аргументом идёт функция, которая возвращает объект с методами, в методе можно указать взаимодействие с рефом внутри компонента, например, вызвать `inputRef.current.focus()`;
+- третьим аргументом идёт массив зависимостей, которые используются в методах второго аргумента, если одна из зависимостей поменялась, то функция, которая возвращает объект с методами будет пересоздана, чтобы методы могли получить доступ к актуальным значениям.
+
+То есть по сути, в реф, который кидается в `InputField`, а затем и в хук, вкладываются методы, определенные внутри ребёнка и родитель может вызывать эти методы.
+
+```js
+const InputField = ({ apiRef, onChange }) => {
+  const inputRef = useRef(null);
+
+  useImperativeHandle(apiRef, () => {
+    return {
+      focus() {
+        inputRef.current.focus();
+      },
+    };
+  });
+
+  return <input type="text" ref={inputRef} onChange={onChange} />;
+};
+
+const Form = () => {
+  const [name, setName] = useState("");
+  const apiRef = useRef(null);
+
+  const onSubmitClick = () => {
+    if (!name) {
+      console.log(apiRef);
+      apiRef.current.focus();
+    } else {
+      // submit the data here!
+    }
+  };
+
+  return (
+    <>
+      <InputField apiRef={apiRef} onChange={setName} />
+
+      <button onClick={onSubmitClick}>Submit the form!</button>
+    </>
+  );
+};
+```
+
+## Управление рефом ребёнка в родителе через без `useImperativeHandle`
+
+Хук `useImperativeHandle` достаточно запутанный, к счастью, можно сделать тоже самое, но без него.
+
+```js
+const InputField = ({ apiRef, onChange }) => {
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    apiRef.current = {
+      focus() {
+        inputRef.current.focus();
+      },
+    };
+  }, [apiRef]);
+
+  return (
+    <input
+      type="text"
+      className={shouldShake ? "shake" : ""}
+      ref={inputRef}
+      onChange={onChange}
+    />
+  );
+};
+
+const Form = () => {
+  const [name, setName] = useState("");
+  const apiRef = useRef(null);
+
+  const onSubmitClick = () => {
+    if (!name) {
+      console.log(apiRef);
+      apiRef.current.focus();
+    } else {
+      // submit the data here!
+    }
+  };
+
+  return (
+    <>
+      <InputField apiRef={apiRef} onChange={setName} />
+
+      <button onClick={onSubmitClick}>Submit the form!</button>
+    </>
+  );
+};
+```
+
+Раз реф это просто мутируемый объект, причём синхронно мутируемый, то мы можем просто в `useEffect` изменить реф, который прокидывается сверху.
+
