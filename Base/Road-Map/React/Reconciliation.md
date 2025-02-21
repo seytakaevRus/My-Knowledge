@@ -1,6 +1,8 @@
 ---
 tags:
   - react
+refs:
+  - https://www.advanced-react.com/
 date: 2025-02-08
 author: Ruslan Seit-Akaev
 ---
