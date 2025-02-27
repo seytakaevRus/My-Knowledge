@@ -129,6 +129,33 @@ const Example = () => {
 };
 ```
 
+В принципе `useCallback` можно изменить на `useRef`, так как он также сохраняет ссылку на функцию.
+
+```ts
+const Example = () => {
+  const [value, setValue] = useState("");
+  const [posts, setPosts] = useState<Post[]>([]);
+
+  const debouncedFetchPosts = useRef(
+    debounce((search: string) => {
+      fetchPosts(search).then((data: Post[]) => setPosts(data));
+    }, 500)
+  );
+
+  const onChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
+    setValue(target.value);
+    debouncedFetchPosts.current(target.value);
+  };
+
+  return (
+    <>
+      <div>Количество подходящих постов: {posts.length}</div>
+      <input type="text" value={value} onChange={onChange} />
+    </>
+  );
+};
+```
+
 ## Реализация
 
 ```ts
