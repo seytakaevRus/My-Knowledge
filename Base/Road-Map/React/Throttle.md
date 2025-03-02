@@ -208,17 +208,20 @@ const App = () => {
 Видно, что количество вызов с `throttle` ниже количество вызовов без `throttle` на  `(225 - 160) / 160 = 0.40`, то есть на `40%`.
 
 ![[Throttle_1.png]]
-## Реализация 1
+
+## Реализация функции `throttle`
+
+### Реализация 1
 
 Можно хранить время последнего вызова `callback`. А при каждом вызове функции, которая возвращается `throttle`, проверять, прошло ли достаточно времени, чтобы вызвать `callback`, ведь нам нужно вызвать не раньше `time`. Если прошло времени больше или равно `time`, то вызываем `callback` и сохраняем последнее время вызова.
 
 ```ts
-type Callback = (...args: unknown[]) => void;
+type Callback = (...args: any[]) => void;
 
 const throttle = (callback: Callback, time: number): Callback => {
   let lastCalledTime = 0;
 
-  return (...args: unknown[]) => {
+  return (...args: any[]) => {
     const now = Date.now();
 
     if (now - lastCalledTime >= time) {
@@ -230,7 +233,7 @@ const throttle = (callback: Callback, time: number): Callback => {
 };
 ```
 
-## Реализация 2
+### Реализация 2
 
 Здесь используется флаг `shouldWait`, который отвечает за то, можно ли вызвать `callback`. Изначально флаг поставлен в `false`, поэтому первый вызов происходит и флаг ставится в `true`. А вернется флаг в `false` в `setTimeout` через время `time`. 
 
@@ -251,5 +254,106 @@ const throttle = (callback: Callback, time: number): Callback => {
       }, time);
     }
   };
+};
+```
+
+## Реализация хука `useThrottle`
+
+Конечно, можно использовать в `React` вызов функции `throttle`, обернутый в `useCallback`, но у такого решения есть несколько недостатков:
+
+1. Каждый раз при вызове `throttle` его нужно оборачивать в `useCallback` с пустым массивом из зависимостей;
+2. Внутри функции не получится использовать последнее значение из `state` из-за работы `useCallback`.
+
+Хук ниже решает эти проблемы.
+
+```ts
+type Callback = (...args: any[]) => void;
+
+export const useThrottle = (callback: Callback, time: number) => {
+  const ref = useRef(callback);
+
+  useEffect(() => {
+    ref.current = callback;
+  }, [callback]);
+
+  const throttledCallback = throttle(
+    (...args: unknown[]) => ref.current(...args),
+    time
+  );
+
+  return useCallback(throttledCallback, []);
+};
+```
+
+Чтобы понять, как этот хук работает пойдём от обратного. Мы знаем, что ссылка на функцию, которую возвращает `throttle` должна быть одинаковой, иначе [[Замыкание|замыкание]] не сработает. Поэтому строчку с `useCallback` оставляем и для удобства возвращаемую функцию вынесем в `throttledCallback`. 
+
+Теперь, чтобы иметь доступ к новым значениям `callback` постоянно быть новым, опять же из-за замыкания. Если посмотреть ниже, то можно увидеть, что функция внутри `useThrottle` пересоздаётся при ререндере компонента, так что `callback` имеет доступ к последним значениям.
+
+Осталось использовать [[Замыкание#Сочетание `useCallback`, `useRef` и `useEffect` для решения кейса|связку из хуков]], чтобы это решение заработало.
+
+Для проверки его работы есть хук `useUpdateComponentEverySecond` который каждую секунду возвращает новое число и при ресайзинге `count` постоянно новый.
+
+```tsx
+const Resizable = ({ children }: PropsWithChildren) => {
+  const [dimensions, setDimensions] = useState({
+    width: 0,
+    height: 0,
+  });
+  const count = useUpdateComponentEverySecond();
+
+  const throttledResize = useThrottle((event) => {
+    console.log(count);
+
+    setDimensions({
+      width: event.target.innerWidth,
+      height: event.target.innerHeight,
+    });
+  }, 16.6);
+
+  useEffect(() => {
+    window.addEventListener("resize", throttledResize);
+
+    return () => {
+      window.removeEventListener("resize", throttledResize);
+    };
+  }, []);
+
+  const width =
+    dimensions.width != null ? `${dimensions.width * 0.6}px` : "auto";
+  const height =
+    dimensions.height != null ? `${dimensions.height * 0.6}px` : "auto";
+
+  return (
+    <div
+      style={{
+        width,
+        height,
+      }}
+    >
+      {children}
+    </div>
+  );
+};
+
+const Graphic = () => {
+  return (
+    <div
+      style={{
+        backgroundColor: "red",
+        width: "100%",
+        height: "100%",
+      }}
+    >
+      <VerySlowComponent />
+    </div>
+  );
+};
+
+const App = () => {
+  return (
+    <Resizable>
+      <Graphic />
+    </Resizable>
+  );
 };
 ```

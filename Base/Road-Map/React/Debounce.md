@@ -156,7 +156,7 @@ const Example = () => {
 };
 ```
 
-## Реализация
+## Реализация функции `debounce`
 
 `debounce` возвращает новую функцию, которая при вызове очищает предыдущий `id`, если он есть, если нет, то заводит новый таймер.
 
@@ -175,5 +175,73 @@ const debounce = (callback: Callback, time: number): Callback => {
       callback(...args);
     }, time);
   };
+};
+```
+
+## Реализация хука `useDebounce`
+
+Конечно, можно использовать в `React` вызов функции `debounce`, обернутый в `useCallback`, но у такого решения есть несколько недостатков:
+
+1. Каждый раз при вызове `debounce` его нужно оборачивать в `useCallback` с пустым массивом из зависимостей;
+2. Внутри функции не получится использовать последнее значение из `state` из-за работы `useCallback`.
+
+Хук ниже решает эти проблемы.
+
+```ts
+type Callback = (...args: any[]) => void;
+
+export const useDebounce = (callback: Callback, time: number) => {
+  const ref = useRef(callback);
+
+  useEffect(() => {
+    ref.current = callback;
+  }, [callback]);
+
+  const debouncedCallback = debounce((...args: any[]) => {
+    ref.current(...args);
+  }, time);
+
+  return useCallback(debouncedCallback, []);
+};
+```
+
+Чтобы понять, как этот хук работает пойдём от обратного. Мы знаем, что ссылка на функцию, которую возвращает `debounce` должна быть одинаковой, иначе [[Замыкание|замыкание]] не сработает. Поэтому строчку с `useCallback` оставляем и для удобства возвращаемую функцию вынесем в `debouncedCallback`. 
+
+Теперь, чтобы иметь доступ к новым значениям `callback` постоянно быть новым, опять же из-за замыкания. Если посмотреть ниже, то можно увидеть, что функция внутри `useDebounce` пересоздаётся при ререндере компонента, так что `callback` имеет доступ к последним значениям.
+
+Осталось использовать [[Замыкание#Сочетание `useCallback`, `useRef` и `useEffect` для решения кейса|связку из хуков]], чтобы это решение заработало.
+
+Для проверки его работы есть хук `useUpdateComponentEverySecond` который каждую секунду возвращает новое число и при печатании в инпуте `count` постоянно новый.
+
+```tsx
+const Example = () => {
+  const [value, setValue] = useState("");
+  const [posts, setPosts] = useState<Post[]>([]);
+
+  const count = useUpdateComponentEverySecond();
+
+  const debouncedLoadPosts = useDebounce(async (search: string) => {
+    console.log(count);
+
+    try {
+      const posts = await fetchPosts(search);
+
+      setPosts(posts);
+    } catch (error) {
+      console.error(error);
+    }
+  }, 400);
+
+  const onChange = async ({ target }: ChangeEvent<HTMLInputElement>) => {
+    setValue(target.value);
+    debouncedLoadPosts(target.value);
+  };
+
+  return (
+    <>
+      <div>Количество подходящих постов: {posts.length}</div>
+      <input type="text" value={value} onChange={onChange} />
+    </>
+  );
 };
 ```
