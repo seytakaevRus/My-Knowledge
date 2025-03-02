@@ -22,7 +22,7 @@ author: Ruslan Seit-Akaev
 
 Здесь `data` будет пересоздаваться на каждое обновление `Component`.
 
-```js
+```jsx
 const Component = () => {
   const data = { id: "test" };
 }
@@ -30,7 +30,7 @@ const Component = () => {
 
 Как и через `useState`, так и через `useRef` мы можем сохранить значение между ререндерами. Единственное, `useRef` [[Refs#Отличие `useRef` от `useState` на примере|не вызывает]] обновление компонента при изменении.
 
-```js
+```jsx
 const Component = () => {
   const ref = useRef({ id: "test" });
 }
@@ -38,7 +38,7 @@ const Component = () => {
 
 Чтобы получить доступ к реальному элементу `DOM` нужно на него навесить `ref`. И обратиться через `ref.current`.
 
-```js
+```jsx
 const App = () => {
   const ref = useRef();
 
@@ -48,7 +48,7 @@ const App = () => {
 
 Как было сказано выше, мутация рефа не вызывает обновление компонента, поэтому получить доступ просто так не получится. Здесь `log` выведет `null`.
 
-```js
+```jsx
 const App = () => {
   const ref = useRef(null);
 
@@ -60,7 +60,7 @@ const App = () => {
 
 Но если вызвать обновление компонента, то способом выше удастся получить доступ к рефу.
 
-```js
+```jsx
 const App = () => {
   useUpdateComponentEverySecond();
 
@@ -74,7 +74,7 @@ const App = () => {
 
 Поэтому обычно используется `useEffect` или обработчики событий для доступа к `ref`.
 
-```js
+```jsx
 const App = () => {
   const ref = useRef(null);
 
@@ -88,7 +88,7 @@ const App = () => {
 
 Ссылка на `ref` остаётся одинаковой между ререндерами, будто используется `useMemo`.
 
-```js
+```jsx
 const App = () => {
   useUpdateComponentEverySecond();
 
@@ -110,7 +110,7 @@ const App = () => {
 
 Через `useRef`:
 
-```js
+```jsx
 const Form = () => {
   const inputRef = useRef(null);
 
@@ -135,7 +135,7 @@ const Form = () => {
 
 Через `useState`:
 
-```js
+```jsx
 const Form = () => {
   const [text, setText] = useState("");
 
@@ -162,7 +162,7 @@ const Form = () => {
 
 Второе отличие это то, что обновление рефа синхронное. Ниже `before` отличается от `after` на одну букву.
 
-```js
+```jsx
 const Form = () => {
   const textRef = useRef("");
 
@@ -179,7 +179,7 @@ const Form = () => {
 
 А обновление `useState` является асинхронным. Ниже `before` и `after` одинаковые.
 
-```js
+```jsx
 const Form = () => {
   const [text, setText] = useState("");
 
@@ -202,7 +202,7 @@ const Form = () => {
 
 К примеру, можно считывать количество обновлений у компонента.
 
-```js
+```jsx
 useEffect(() => {
   ref.current = ref.current + 1;
 
@@ -214,7 +214,7 @@ useEffect(() => {
 
 Что если у нас есть компонент `Form`, а в нём компонент `InputField`. Обработка ошибок производится в `Form` и нужно, чтобы при ошибке в `InputField` производился фокус этого инпута. 
 
-```js
+```jsx
 const InputField = ({ onChange }) => {
   return <input type="text" onChange={onChange} />;
 };
@@ -241,7 +241,7 @@ const Form = () => {
 
 Можно сделать так, через отдельный `useState`, который хранит, когда нужно сфокусировать инупут, и внутри компонента `InputField` сделать это.
 
-```js
+```jsx
 const InputField = ({ isInputFocused, onChange }) => {
   const inputRef = useRef(null);
 
@@ -281,7 +281,7 @@ const Form = () => {
 
 Но можно сделать это проще. Прокидываем реф через пропс `inputRef`, главное назвать его по-другому.
 
-```js
+```jsx
 const InputField = ({ inputRef, onChange }) => {
   return <input ref={inputRef} type="text" onChange={onChange} />;
 };
@@ -314,7 +314,7 @@ const Form = () => {
 
 `forwardRef` принимает компонент и возвращает новый компонент. У нового компонента помимо пропсов есть доступ к рефу, прокинутому сверху.
 
-```js
+```jsx
 const InputField = ({ onChange }, ref) => {
   return <input ref={ref} type="text" onChange={onChange} />;
 };
@@ -361,7 +361,7 @@ const Form = () => {
 
 То есть по сути, в реф, который кидается в `InputField`, а затем и в хук, вкладываются методы, определенные внутри ребёнка и родитель может вызывать эти методы.
 
-```js
+```jsx
 const InputField = ({ apiRef, onChange }) => {
   const inputRef = useRef(null);
 
@@ -403,7 +403,7 @@ const Form = () => {
 
 Хук `useImperativeHandle` достаточно запутанный, к счастью, можно сделать тоже самое, но без него.
 
-```js
+```jsx
 const InputField = ({ apiRef, onChange }) => {
   const inputRef = useRef(null);
 

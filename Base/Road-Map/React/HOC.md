@@ -14,7 +14,7 @@ author: Ruslan Seit-Akaev
 
 Ниже `HOC` является `withTheme`, который принимает в себя компонент, определяет тему (в реальном мире тема могла браться из контекста), и возвращает новый компонент, которому передаётся в качестве дополнительного пропса тема. Далее вызов функции `withTheme` экспортировался как новый компонент.
 
-```js
+```jsx
 const withTheme = (Component) => {
   const theme = isDark ? "dark" : "light";
 
@@ -30,7 +30,7 @@ export const ButtonWithTheme = withTheme(Button);
 
 Но сейчас такой пример можно элегантно решить через хуки.
 
-```js
+```jsx
 const Button = ({ theme }) => {
   const theme = useTheme();
 
@@ -46,7 +46,7 @@ const Button = ({ theme }) => {
 
 Представим, что нужно по клике на кнопку вывести какие-то логи, связанные с этим компонентом. 
 
-```js
+```jsx
 const Button = ({ onClick, children }) => {
   return <button onClick={onClick}>{children}</button>;
 };
@@ -54,7 +54,7 @@ const Button = ({ onClick, children }) => {
 
 Первое, что приходит на ум, это использовать хуки в компоненте, где используется `Button` вызывать функцию логирования с нужными данными.
 
-```js
+```jsx
 const Component = () => {
   const log = useLog();
 
@@ -70,7 +70,7 @@ const Component = () => {
 
 В таком случае можно логику логирования перенести в сам компонент `Button`.
 
-```js
+```jsx
 const Button = ({ onClick, children }) => {
   const log = useLog();
 
@@ -85,7 +85,7 @@ const Button = ({ onClick, children }) => {
 
 И также нужно в кнопку передавать данные, которые нужно логировать
 
-```js
+```jsx
 const Button = ({ onClick, children, loggingData }) => {
   const log = useLog();
 
@@ -102,7 +102,7 @@ const Button = ({ onClick, children, loggingData }) => {
 
 Здесь отлично подойдёт `HOC`.
 
-```js
+```jsx
 const withLoggingOnClick = (Component) => {
   return (props) => {
     const onClick = () => {
@@ -137,13 +137,13 @@ const App = () => {
 
 Если нужно, чтобы другой компонент при клике отдавал логи, то просто оборачиваем его в `HOC` и также используем.
 
-```js
+```jsx
 const LinkWithLogging = withLoggingOnClick(Link);
 ```
 
 Передать данные для отправки логирования можно так.
 
-```js
+```jsx
 const withLoggingOnClick = (Component, { text }) => {
   return (props) => {
     console.log(props);
@@ -164,7 +164,7 @@ const ButtonWithLoggingOnClickWithParams = withLoggingOnClick(Button, {
 
 Либо можно передавать не в `HOC`, а в сам компонент.
 
-```js
+```jsx
 const withLoggingOnClick = (Component) => {
   return (props) => {
     const onClick = () => {
@@ -198,7 +198,7 @@ const App = () => {
 
 Можно расширять не только колбэки, но и события жизненного цикла. Например можно сделать `HOC`, который будет сообщать, когда компонент смонтировался.
 
-```js
+```jsx
 const withLogOnMount = (Component) => {
   return (props) => {
     useEffect(() => {
@@ -228,7 +228,7 @@ const App = () => {
 
 Или на логирование, когда произойдёт обновление определённого пропса.
 
-```js
+```jsx
 const withLogOnMount = (Component) => {
   return (props) => {
     useEffect(() => {
@@ -262,7 +262,7 @@ const App = () => {
 
 Предположим, что мы разрабатывает шорткаты клавиатуры для страницы. То есть при нажатии определённой комбинации клавиш происходит какое-то действие, создание сущности на сайте (создание жалобы) или переход на какую-то страницу. Обычно для такого создаются глобальные слушатели событий, чтобы почти во всех местах ему осуществить действие, на котором привязан шорткат.
 
-```js
+```jsx
 useEffect(() => {
   const keyDownListener = (event) => {
     console.log("Use global key down");
@@ -278,7 +278,7 @@ useEffect(() => {
 
 Почти во всех местах, потому что в модалках, диалогах, и других компонентах есть шорткаты, которые используются для открытия/закрытия или других действий только в этих компонентах . А раз событие умеет всплывать, то в месте использования нужно ограничить его, чтобы оно не добралось до глобального слушателя, поэтому используем `event.stopPropagation`.
 
-```js
+```jsx
 const Input = () => {
   const onKeyDown = (event) => {
     event.stopPropagation();
@@ -296,7 +296,7 @@ const Input = () => {
 
 И если таких места пару, то всё окей, но если много, то будет такая же проблема как и [[HOC#Расширение колбэков|тут]]. Нужно будет копировать и вставлять `event.stopPropogation` по всему приложению. Поэтому можно использовать `HOC`.
 
-```js
+```jsx
 const withPressKeyDown = (Component) => {
   return (props) => {
     const onKeyDown = (event) => {

@@ -17,7 +17,7 @@ author: Ruslan Seit-Akaev
 
 Так будет выглядеть компонент страницы.
 
-```js
+```jsx
 const Page = () => {
   return (
     <Layout>
@@ -30,7 +30,7 @@ const Page = () => {
 
 Примерно так `Sidebar`, где `ExpandButton` контролирует открытие и закрытие сайдбара.
 
-```js
+```jsx
 const Sidebar = () => {
   return (
     <div className="sidebar">
@@ -42,7 +42,7 @@ const Sidebar = () => {
 
 А так будет выглядеть `MainPart`, где `AdjustableColumnsBlock` это галерея, которая будет рендериться в две или три колонки.
 
-```js
+```jsx
 const MainPart = () => {
   return (
     <>
@@ -56,7 +56,7 @@ const MainPart = () => {
 
 Теперь в `Page` нужно хранить состояние видимости сайдбара, чтобы состояние можно было передать в другие компоненты.
 
-```js
+```jsx
 const Page = () => {
   const [isNavExpanded, setIsNavExpanded] = useState();
   
@@ -66,7 +66,7 @@ const Page = () => {
 
 Потом это состояние нужно передать в `Sidebar`, в `MainPart` и от туда в `AdjustableColumnsBlock`. Будет это выглядеть примерно так.
 
-```js
+```jsx
 const Page = () => {
   const [isNavExpanded, setIsNavExpanded] = useState();
   
@@ -115,7 +115,7 @@ const MainPart = ({ isNavExpanded }) => {
 
 Создаём компонент, где будет храниться логика по управлению видимости сайдбара. И создаём сам контекст. [[React_deep_dive#Техника "передача компонента через пропс"|Как мы помним]] при обновлении `NavExpandController` `children` не будут перерендерены.
 
-```js
+```jsx
 const NavContext = createContext({
   isNavExpanded: true,
   toggle: () => {},
@@ -137,7 +137,7 @@ const NavExpandController = ({ children }) => {
 
 Далее оборачиваем компоненты в `NavExpandController`.
 
-```js
+```jsx
 const Page = () => {
   return (
     <NavExpandController>
@@ -152,13 +152,13 @@ const Page = () => {
 
 Получения контекст производится при помощи хука `useContext(Context)`, поэтому для удобства его можно вынести в отдельный хук.
 
-```js
+```jsx
 const useNavbarStatus = () => useContext(NavContext);
 ```
 
 Вызываем этот хук в тех местах, где нужен был доступ к `isNavExpanded` и `toggle`.
 
-```js
+```jsx
 const AdjustableColumnsBlock = () => {
   const { isNavExpanded } = useNavbarStatus();
 
@@ -209,7 +209,7 @@ const Sidebar = () => {
 
 Каждый раз, когда произойдёт обновление `NavExpandController` произойдёт и новое обновление `value`, поэтому все компоненты, который прямо или косвенно используют `useContext` будут обновлены.
 
-```js
+```jsx
 const NavContext = createContext({
   isNavExpanded: true,
   toggle: () => {},
@@ -231,7 +231,7 @@ const NavExpandController = ({ children }) => {
 
 Например, перенесём `NavExpandController` внутрь `Layout`. И добавим в него отслеживание события клика, чтобы понимать сколько раз пользователь произвёл кликов на странице.
 
-```js
+```jsx
 const Layout = ({ children }: { children: ReactNode }) => {
   const [, setClickCount] = useState(0);
 
@@ -253,7 +253,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
 
 Но этого можно избежать, если сохранять ссылку на одно и тоже `value` при помощи `useMemo`.
 
-```js
+```jsx
 const NavExpandController = ({ children }) => {
   const [isNavExpanded, setIsNavExpanded] = useState(true);
 
@@ -273,7 +273,7 @@ const NavExpandController = ({ children }) => {
 
 Если создать новые методы `open` и `close`, которые не завязаны на актуальном значении состояния:
 
-```js
+```jsx
 const NavExpandController = ({ children }) => {
   const [isNavExpanded, setIsNavExpanded] = useState(true);
 
@@ -293,7 +293,7 @@ const NavExpandController = ({ children }) => {
 
 И использовать в каком-то компоненте, то можно заменить, что при изменении `isNavExpanded`, этот компонент будет перерендрен. Это происходит, потому что создаётся новое `value` внутри `NavExpandController` и все компоненты, подписанные на контекст будут вызваны заново.
 
-```js
+```jsx
 const Component = () => {
   console.log("Component");
 
@@ -309,7 +309,7 @@ const Component = () => {
 
 Создаём новый контекст и хук его использования.
 
-```js
+```jsx
 const NavApiContext = createContext({
   open: () => {},
   close: () => {},
@@ -321,7 +321,7 @@ const useNavbarApi = () => useContext(NavApiContext);
 
 Добавляем его в `NavExpandController`.
 
-```js
+```jsx
 const NavExpandController = ({ children }) => {
   const [isNavExpanded, setIsNavExpanded] = useState(true);
 
@@ -351,7 +351,7 @@ const NavExpandController = ({ children }) => {
 
 Теперь компонент ниже не будет ререндериться, если мы изменим видимость сайдбара, потому что `api` в `NavExpandController` не зависит от `isNavExpanded`.
 
-```js
+```jsx
 const Component = () => {
   console.log("Component");
 
@@ -367,7 +367,7 @@ const Component = () => {
 
 `useReducer` возвращает массив, где первым элементов будет стейт, а вторым функция `dispatch` (её принято называть так), через которую будет производиться изменение состояния. А принимает `useReducer` функцию `reducer`, где определяется как именно изменяется `state`, и начальное значение `state` как вторым аргументом.
 
-```js
+```jsx
 const NavExpandController = ({ children }) => {
   console.log("NavExpandController");
 
@@ -424,7 +424,7 @@ const reducer = (state, action) => {
 
 Для этого.  Сохраняем ссылку на `open` через `useCallback`.
 
-```js
+```jsx
 const NavExpandController = ({ children }) => {
   const [isNavExpanded, setIsNavExpanded] = useState(true);
 
@@ -450,7 +450,7 @@ const NavExpandController = ({ children }) => {
 
 Создаём `HOC` `withOpen` и вызываем его.
 
-```js
+```jsx
 const withOpen = (Component) => {
   return (props) => {
     const { open } = useNavbarData();
@@ -468,7 +468,7 @@ const Component = withOpen(({ openNav }) => {
 
 В данном случае проблема остаётся той же, чтобы это исправить нужно обернуть `Component` в `memo`.
 
-```js
+```jsx
 const withOpen = (Component) => {
   const MemoComponent = memo(Component);
 
@@ -482,7 +482,7 @@ const withOpen = (Component) => {
 
 Либо же использовать `useMemo`, но если в `Component` будут переданы какие-то пропсы сверху, то их нужно будет тоже добавить в `useMemo`, иначе `Component` не будет корректно обновлён.
 
-```js
+```jsx
 const withOpen = (Component) => {
   return (props) => {
     const { open } = useNavbarData();
