@@ -196,6 +196,8 @@ const doSomeLogicWithPointNode = <PointNode,>(node: PointNode) => {
 
 Через запятую сделано для совместимости с `React`, так как там есть `JSX`, специальный синтаксис для разметки, который тоже начинается с `<>`, поэтому компилятору не понятно, что перед ним `JSX` или `generic`.
 
+https://typehero.dev/challenge/generic-function-arguments
+
 ### Ограничения
 
 В примерах выше в `CustomNode` можно передать вообще любые значения, то есть:
@@ -223,3 +225,53 @@ type CustomNode<Type extends NodeType, Data extends { [key: string]: any }> = {
 
 TODO: Мб, есть какой-то хак?
 
+https://typehero.dev/challenge/generic-type-constraints
+
+### Общий тип по умолчанию
+
+Также, как и для аргументов в функции для общих типов можно задать тип по умолчанию.
+
+```ts
+type Log<Message, Level = "info"> = {
+  message: Message;
+  level: Level;
+};
+
+type ExplicitDebugLog = Log<"explicit", "debug">;
+type ImplicitInfo = Log<"implicit info">;
+```
+
+Если навести курсор на `ImplicitInfo`, то в поле `level` будет виден `info`.
+
+Любой тип будет применён как тип по умолчанию, будь то `any`, `never` или `unknown`. Это никак в `JS` с `undefined`, где его передача может значить, что либо ничего не было передано, либо передался `undefined` в качестве значения.
+
+https://typehero.dev/challenge/default-generic-arguments
+
+TODO: расписать про "infering" в `TS`
+
+## Indexed types (получение типа по индексу)
+
+Это бывает полезно, если есть тип массива или объекта и нужно получить тип определённого элемента.
+
+```ts
+type Cars = ['Bugatti', 'Ferarri', 'Lambo', 'Porsche', 'Toyota Corolla'];
+type SecondCar = Cars[1]; // Ferarri
+
+type Donations = {
+  Bono: 15_000_000;
+  'J.K. Rowling': 160_000_000;
+  'Taylor Swift': 45_000_000;
+  'Elton John': 600_000_000;
+  'Angelina Jolie and Brad Pitt': 100_000_000;
+};
+type BonoDonations = Donations["Bono"]; // 15000000
+```
+
+Важно заметить, что `TS` возвращает не строку или число, а литералы.
+
+Что интересно, если попробовать получить определённую букву по индексу в строке, но вернётся вся строка.
+
+```ts
+type Question = "Who am I";
+type FirstCharacter = Question[0]; // string
+```
