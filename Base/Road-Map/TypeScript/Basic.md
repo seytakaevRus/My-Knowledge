@@ -136,7 +136,7 @@ https://typehero.dev/challenge/keyof
 
 Если брать аналогию, то `generic` это своего рода функции, которые могут принимать разные типы. Они обозначаются при помощи `<>`.
 
-### У типов или интерфейсов
+### У типов
 
 Скажем, есть библиотека `reactflow` и в ней есть узлы. У них есть идентификатор `id`, тип `type` и данные `data`, в зависимости от типа в данных могут содержатся разные поля. Тип для `data` описан ниже.
 
@@ -188,15 +188,37 @@ https://typehero.dev/challenge/generic-type-arguments
 
 ### У функций
 
+Для передачи дженерика в стрелочную функцию нужно использовать `<>` перед параметрами.
+
 ```ts
-const doSomeLogicWithPointNode = <PointNode,>(node: PointNode) => {
-   ///
-}
+const identity = <T,>(parameter: T) => parameter;
 ```
 
 Через запятую сделано для совместимости с `React`, так как там есть `JSX`, специальный синтаксис для разметки, который тоже начинается с `<>`, поэтому компилятору не понятно, что перед ним `JSX` или `generic`.
 
+При вызове функции можно передавать дженерик:
+
+```ts
+identity<string>("who am I?");
+```
+
+А можно не передавать:
+
+```ts
+identity("who am I?");
+```
+
+Разница в том, что при не передаче `TS` будет сам вычислять тип и в более сложных случаях это может привести к ошибкам в типах, поэтому нужно будет ясно передавать дженерик.
+
+Интересно то, как именно `TS` вычисляет тип для конкретного дженерика. Рассмотрим функцию `mapArray`, которая принимает массив и функцию, которая берёт элемент из этого массива и возвращает новое значение.
+
+```js
+const mapArray = (array, callback) = array.map(callback); 
+```
+
 https://typehero.dev/challenge/generic-function-arguments
+
+TODO: расписать про "infering" в `TS`
 
 ### Ограничения
 
@@ -247,9 +269,7 @@ type ImplicitInfo = Log<"implicit info">;
 
 https://typehero.dev/challenge/default-generic-arguments
 
-TODO: расписать про "infering" в `TS`
-
-## Indexed types (получение типа по индексу)
+## Indexed types (получение типа по ключу)
 
 Это бывает полезно, если есть тип массива или объекта и нужно получить тип определённого элемента.
 
@@ -275,3 +295,100 @@ type BonoDonations = Donations["Bono"]; // 15000000
 type Question = "Who am I";
 type FirstCharacter = Question[0]; // string
 ```
+
+## Indexed signatures (тип с неограниченным количеством ключей)
+
+К примеру, бэк возвращает такой ответ, как написать для него тип?
+
+```ts
+{
+  "info": {
+    "count": 9001,
+    "currentPage": 1,
+    "pages": 22
+  },
+  "results": {
+    "user_ddb04d2e-21ff-4c68-9bdc-135c16c8e74a": 0,
+    "user_1e118b25-c0b9-4bfc-8d04-901ad8a2eb20": 3,
+    "user_7c56283c-6a5e-4d79-bdd0-9c6a3cafd2c4": 15,
+    "user_2eac2f5e-4f11-4d36-84b5-9d273816d6f6": 7,
+    "user_4b88b4a3-8d42-4fc9-9f73-8db296d9b03d": 88,
+    "user_af836d5e-16a2-452d-bec4-694d6cd8e49f": 92,
+    "user_610c236f-b3bb-45e9-a09b-1d7e362c7fbb": 14,
+    "user_7a8e29f0-d7b0-4b75-9ad2-c8a145073eab": 6,
+    "user_eaa914df-4650-4c3b-9a04-723b5a63f297": 764,
+    "user_3199b7c6-7a8d-47eb-ae94-4e3457ad7760": 32,
+    // ... for many more rows in this page
+  }
+}
+```
+
+С полем `info` всё ясно, но что насчёт `results`? Здесь как раз и поможет индексная сигнатура.
+
+Мы указываем, в типе `Results` будут содержаться какое-то количество записей, у которых ключ это строка, а значение это число. `userId` это всего лишь псевдоним, он может быть каким угодно.
+
+```ts
+type Results = {
+  [userId: string]: number;
+};
+```
+
+>Хоть и `TS` позволяет указать возле `userId` тип `boolean`, `number`, `null` и т.д. Но в действительности в объекте в качестве ключа может быть только строка или символ. Поэтому указывать в типе что-то иное кроме строки или символа бессмысленно, это будет только вводить в заблуждение.
+
+
+## Mapped object types (перебор типа)
+
+`Перебор типа` позволяет создавать новые типы через преобразование свойств текущих типов, позволяя делать код более гибким.
+
+Начать можно с перебора, который просто перебирает тип и возвращает его копию. 
+
+```ts
+type MoviesByGenre = {
+  action: 'Die Hard';
+  comedy: 'Groundhog Day';
+  sciFi: 'Blade Runner';
+  fantasy: 'The Lord of the Rings: The Fellowship of the Ring';
+  drama: 'The Shawshank Redemption';
+  horror: 'The Shining';
+  romance: 'Titanic';
+  animation: 'Toy Story';
+  thriller: 'The Silence of the Lambs';
+};
+
+type MappedMoviesByGenre = {
+	[Key in keyof MoviesByGenre]: MoviesByGenre[Key];
+}
+```
+
+`Key` является псевдонимом, он может быть каким угодно. `in` специальный оператор для перебора, который говорит, что `Key` представляет из себя единственное значение из массива, который указан правее этого оператора. `keyof MoviesByGenre` возвращает объединение из ключей. А `MoviesByGenre[Key]` возвращает значение
+
+Можно добавить дженерик, чтобы можно было копировать переданный тип.
+
+```ts
+type MappedType<T> = {
+	[Key in keyof T]: T[Key];
+}
+
+type MappedMoviesByGenre = MappedType<MoviesByGenre>;
+```
+
+Вместо `T[key]` может быть и другой тип, например `boolean`.
+
+```ts
+type MappedTypeWithOnlyBoolean<T> = {
+	[Key in keyof T]: boolean;
+}
+
+type MappedMoviesByGenre = MappedTypeWithOnlyBoolean<MoviesByGenre>;
+```
+
+Или вообще объединение из типом, например добавить к каждому типу `undefined`.
+
+```ts
+type MappedTypeWithUndefined<T> = {
+	[Key in keyof T]: T[Key] | undefined;
+}
+
+type MappedMoviesByGenre = MappedTypeWithUndefined<MoviesByGenre>;
+```
+
