@@ -8,7 +8,7 @@
 - `null`, собственно `null`;
 - `undefined`, собственно `undefined`.
 
-TODO: Написать про `symbol, bigint, object, never, unknown, any`.
+TODO: Написать про `symbol, bigint, object, unknown, any`.
 
 https://typehero.dev/challenge/primitive-data-types
 
