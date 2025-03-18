@@ -69,7 +69,7 @@ type B = "yes" | "no" extends "yes" | "no" | "maybe" ? true : false; // true
 Например, мы создаём тип `First`, который принимает дженерик, являющегося массивом, и возвращает его первый элемент, либо `never`, если был передан не массив.
 
 ```ts
-type First<T extends any[]> = T extends [] ? never : T[0];
+type First<T extends unknown[]> = T extends [] ? never : T[0];
 ```
 
 В данном случаем `[]` обозначает пустой массив и мы проверяем, может ли пустой массив содержать в себе `T` (а такое возможно только, если `T` и есть пустой массив), если да, то в `T` нет элементов, так как он пуст, поэтому возвращаем `never`, иначе возвращаем `T[0]` ([[Basic#Indexed types (получение типа по ключу)|освежить]]).
@@ -247,8 +247,12 @@ const safe = <T>(
     const result = callback(...args);
 
     return createSuccess(result);
-  } catch (error: any) {
-    return createError(`Error: ${error?.message ?? "unknown"}`);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+			return createError(`Error: ${error?.message ?? "unknown"}`);
+		}
+
+		return createError("Unknown Error");
   }
 };
 ```
@@ -317,8 +321,76 @@ https://typehero.dev/challenge/readonly
 
 ## Arrays (массивы)
 
+Для создания типа массива достаточно использовать `[]` или дженерик `Array`.
+
+```ts
+type StringArray = string[];
+type NumberArray = Array<number>;
+type BooleanOrNullArray = (boolean | null)[];
+
+const array: BooleanOrNullArray = [true, false, null];
+```
+
+Если использовать `array["length"]`, чтобы получить длину массиву, то получим только тип `number`. Потому что массивы изменяемые, и `TS` не может гарантировать, что длина массива будет фиксированной.
+
+```ts
+const numbers = [1, 2, 3, 4];
+
+type NumbersLength = typeof numbers["length"];
+```
+
+Если использовать `array[number]`, чтобы получить юнион из элементов, то получим юнион из типов элементов, а не из литералов, потому что массивы изменяемые.
+
+```ts
+const numbers = [1, 2, 3, "4"];
+
+type NumbersElements = typeof numbers[number];
+```
+
+Если нужно расширить массив, то можно использовать оператор `...`, например, дженерик `Push` принимает массив и элемент, и при помощи `...` создаёт новый массив, ограничение `extends unknown[]` нужно для того, чтобы указать, что передать можно только массив.
+
+```ts
+type Push<T extends unknown[], U> = [...T, U];
+```
+
 https://typehero.dev/challenge/push
 
 ## Tuples (кортежи)
 
+В отличие от массива кортеж является неизменяемым типом, поэтому идёт с модификатором `readonly`.
+
+Для создания кортежа достаточно использовать возле массива `as const`. Важно то, что использовать следует возле значения массива, а не возле типа.
+
+```ts
+const tuple = [1, "2", true, null] // (string | number | boolean | null)[]
+const tuple2 = [1, "2", true, null] as const; // readonly [1, "2", true, null]
+```
+
+Благодаря тому, что массив теперь неизменяемый возвращаются литералы, а не просто типы.
+
+Также, теперь при использовании `tuple["length"]` возвращается литерал, а не просто тип `number`.
+
+```ts
+type Tuple2Length = typeof tuple2["length"];
+```
+
+Также, если использовать `tuple[number]`, то получим юнион из литералов, а не из типов.
+
+```ts
+type Tuple2Items = typeof tuple2[number];
+```
+
+Если нужно, чтобы в дженерик мог передаваться кортеж, то нужно использовать `extends readonly any[]`. Такая запись позволит передавать и массивы, и кортежи.
+
+```ts
+type Length<T extends readonly any[]> = T["length"];
+```
+
+Для расширения кортежей также нужно использовать оператор `...`.
+
+```ts
+type Concat<T extends readonly any[], U extends readonly any[]> = [...T, ...U];
+```
+
 https://typehero.dev/challenge/concat
+https://typehero.dev/challenge/length-of-tuple
