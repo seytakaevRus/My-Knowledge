@@ -353,6 +353,32 @@ type NumbersElements = typeof numbers[number];
 type Push<T extends unknown[], U> = [...T, U];
 ```
 
+Если применить оператор [[Basic#Оператор `keyof`|keyof]] на массив, то можно получить объединение из `number` и методов и свойств из `Array.prototype`, это можно проверить кодом ниже.
+
+TODO: Переписать extends на Extract, так как это более точный тип.
+
+```ts
+const array = ["1", true, null, undefined];
+
+type ArrayKeys = keyof typeof array;
+
+type IsContainNumber = number extends ArrayKeys ? true : false; // true
+type IsContainPush = "push" extends ArrayKeys ? true : false; // true
+type IsContainLength = "length" extends ArrayKeys ? true : false; // true
+```
+
+Если в `tsconfig.json` в `lib` добавить `ES2022`, то код ниже тоже даст `true`.
+
+```ts
+type IsContainAt = "at" extends ArrayKeys ? true : false; // true
+```
+
+Причём интересно, что индексы массив собирает в `number`, 
+
+```ts
+type IsContainZeroIndex = "0" extends ArrayKeys ? true : false; // false
+```
+
 https://typehero.dev/challenge/push
 
 ## Tuples (кортежи)
