@@ -347,15 +347,21 @@ const numbers = [1, 2, 3, "4"];
 type NumbersElements = typeof numbers[number];
 ```
 
+Также можно обращаться по индексу. Так как массив динамический, то вернётся объединение из элементов в массиве.
+
+```ts
+const numbers = [1, 2, 3, "4"];
+
+type NumbersElements = typeof numbers[0];
+```
+
 Если нужно расширить массив, то можно использовать оператор `...`, например, дженерик `Push` принимает массив и элемент, и при помощи `...` создаёт новый массив, ограничение `extends unknown[]` нужно для того, чтобы указать, что передать можно только массив.
 
 ```ts
 type Push<T extends unknown[], U> = [...T, U];
 ```
 
-Если применить оператор [[Basic#Оператор `keyof`|keyof]] на массив, то можно получить объединение из `number` и методов и свойств из `Array.prototype`, это можно проверить кодом ниже.
-
-TODO: Переписать extends на Extract, так как это более точный тип.
+Если применить оператор [[Basic#Оператор `keyof`|keyof]] на массив, то можно получить объединение из `number` и методов со свойствами из `Array.prototype`, это можно проверить кодом ниже.
 
 ```ts
 const array = ["1", true, null, undefined];
@@ -367,16 +373,27 @@ type IsContainPush = "push" extends ArrayKeys ? true : false; // true
 type IsContainLength = "length" extends ArrayKeys ? true : false; // true
 ```
 
+Можно также использовать утилиту `Extract`, которая работает следующим образом:
+
+1. Если `T` это не объединение, то выполняется `T extends U` и в случае успеха возвращается `T`, иначе возвращается `never`.
+
+```ts
+type A = Extract<"string", "string" | number>; // "string"
+type B = Extract<boolean, "string" | number>; // never
+```
+
+2. Если `T` это объединение, то каждый тип `D` из объединения `T` прогоняется через `D extends U` и в случае успеха `D` запоминается и затем построится новое объединение, иначе возвращается `never`.
+
+```ts
+type ExtractNumber = Extract<ArrayKeys, number>; // number
+type ExtactPush = Extract<ArrayKeys, "push">; // "push"
+type ExtactLength = Extract<ArrayKeys, "length">; // "length"
+```
+
 Если в `tsconfig.json` в `lib` добавить `ES2022`, то код ниже тоже даст `true`.
 
 ```ts
-type IsContainAt = "at" extends ArrayKeys ? true : false; // true
-```
-
-Причём интересно, что индексы массив собирает в `number`, 
-
-```ts
-type IsContainZeroIndex = "0" extends ArrayKeys ? true : false; // false
+type ExtractAt = Extract<ArrayKeys, "at">; // "at"
 ```
 
 https://typehero.dev/challenge/push
