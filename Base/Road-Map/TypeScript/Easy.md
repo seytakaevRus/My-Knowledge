@@ -76,6 +76,39 @@ type First<T extends unknown[]> = T extends [] ? never : T[0];
 
 https://typehero.dev/challenge/first-of-array
 https://typehero.dev/challenge/if
+
+### Условный тип в дженериках
+
+Если нужно изменить элементы объединения или отфильтровать объединение, то тут нужно использовать сочетание условного типа и [[Basic#Generic (общий тип)|дженериков]].
+
+Общий синтаксис:
+
+```ts
+type Generic<T, K> = T extends K ? never : T;
+```
+
+Как это работает?
+
+1. `T` находится слева от `extends`, поэтому если `T` это объединение, то для каждого типа из `T` будет выполняться условие `type extends K ? never : type`, при возвращении `never` `type` не попадёт в конечное объединение;
+2. Если `T` это тип, а не объединение, то просто выполнится `type extends K ? never : type` и также при возвращении `never` `type` не попадёт в конечное объединение.
+
+Например, у нас есть объединение из примитивов, а мы хотим получить объединение из объектов, с ключом `type`, где значением будет тип из входящего объединения.
+
+```ts
+type UnionToObject<Union> = Union extends any ? { type: Union } : never;
+
+type Union = number | string | null | undefined | symbol;
+type UnionObject = UnionToObject<Union>; // { type: undefined } | { type: number } | { type: string } | { type: null } | { type: symbol } | 
+```
+
+Или есть объединение и мы хотим убрать из него некоторые элементы, получив на выходе другое объединение.
+
+```ts
+type MyExclude<BaseUnion, UnionWithTypesForDelete> = BaseUnion extends UnionWithTypesForDelete ? never : BaseUnion;
+
+type Union = number | string | null | undefined | symbol;
+type TransformedUnion = MyExclude<Union, null | undefined | symbol>;
+```
 ## never
 
 ### Что это за тип?
@@ -571,3 +604,5 @@ type C = TupleToObject<typeof c>;
 ```
 
 https://typehero.dev/challenge/tuple-to-object
+
+## infer
