@@ -279,6 +279,8 @@ if (result.kind === "error") {
 
 ## Mapped object types (перебор типа). Продолжение
 
+### Модификаторы
+
 При переборе типа можно добавлять или удалять модификаторы. Всего есть два модификатор:
 
 - `readonly` - модификатор, говорящий, что поле только для чтения;
@@ -318,6 +320,22 @@ type RequiredCustomObject = MyRequired<PartialCustomObject>;
 ```
 
 https://typehero.dev/challenge/readonly
+
+### Удаление ключей
+
+При переборе типов есть возможность удалять это делается при помощи оператора `as`.
+
+```ts
+type MyPick<Type, Keys extends keyof Type> = {
+	[Property in keyof Type as Property extends Keys ? Property : never]: Type[Property];
+};
+```
+
+1. `Property in keyof Type` перебирает ключи из `Type`;
+2. 
+
+
+https://typehero.dev/challenge/pick
 
 ## Arrays (массивы)
 
@@ -461,3 +479,45 @@ type Concat<T extends readonly any[], U extends readonly any[]> = [...T, ...U];
 
 https://typehero.dev/challenge/concat
 https://typehero.dev/challenge/length-of-tuple
+
+## Преобразование массива/кортежа в объект
+
+Раз нужно преобразовать в объект, то тут подойдёт [[Basic#Mapped object types (перебор типа)|перебор типа]]. С тем отличием, что `Property in keyof T` даст индексы и методы массива/кортежа, а нам нужно получить доступ к элементам массива, поэтому используем `Property in T[number]`. Ограничение `readonly any[]` позволяет прокидывать внутрь массивы и кортежи.
+
+```ts
+type TupleToObject<T extends readonly any[]> = {
+	[Property in T[number]]: Property;
+};
+
+const a = [1, 2, 3] as const;
+const b = ["true", Symbol(1), "6"] as const;
+
+type A = TupleToObject<typeof a>; // { 1: 1, 2: 2, 3: 3 }
+type B = TupleToObject<typeof b>; // { [x: symbol]: symbol, true: "true", 6: "6",  }
+```
+
+Как мы помним в `JS` ключами объекта могут быть только `string` или `symbol`, всё остальное просто преобразуется в `string`. В `TS` добавляется, что `number` также может быть ключом, так как есть обращение к массиву по индексу. Поэтому, если в `TypluToObject` закинуть не `string`, `number` или `symbol`, то `TS` будет это игнорировать.
+
+```ts
+const c = [() => {}, {a: "a"}, true, false, null, undefined, BigInt(1)] as const;
+
+type C = TupleToObject<typeof c>; // {}
+```
+
+Поэтому лучше ограничить передаваемый массив/кортеж на вход. Для этого есть `PropertyKey`, который является объединением из `number | string | symbol`.
+
+```ts
+type TupleToObject<T extends readonly PropertyKey[]> = {
+	[Property in T[number]]: Property;
+};
+```
+
+Теперь этот код будет выдавать ошибку.
+
+```ts
+const c = [() => {}, {a: "a"}, true, false, null, undefined, BigInt(1)] as const;
+
+type C = TupleToObject<typeof c>;
+```
+
+https://typehero.dev/challenge/tuple-to-object
