@@ -331,29 +331,35 @@ type BooleanOrNullArray = (boolean | null)[];
 const array: BooleanOrNullArray = [true, false, null];
 ```
 
-Если использовать `array["length"]`, чтобы получить длину массиву, то получим только тип `number`. Потому что массивы изменяемые, и `TS` не может гарантировать, что длина массива будет фиксированной.
+Если применить оператор [[Basic#Оператор `typeof`|typeof]] к массиву, то можно получить объединение из типов элементов с `[]`
 
 ```ts
-const numbers = [1, 2, 3, 4];
+const numbers = [1, null, true, "4", () => {}];
 
-type NumbersLength = typeof numbers["length"];
+type NumbersType = typeof numbers; // (string | number | boolean | (() => void) | null)[]
 ```
 
-Если использовать `array[number]`, чтобы получить юнион из элементов, то получим юнион из типов элементов, а не из литералов, потому что массивы изменяемые.
+> Массивы изменяемые, поэтому `TS` не может дать гарантирую насчёт длины и элементов в массиве. 
+
+Если использовать `array["length"]`, то получим только тип `number`.
 
 ```ts
-const numbers = [1, 2, 3, "4"];
+const numbers = [1, null, true, "4", () => {}];
 
-type NumbersElements = typeof numbers[number];
+type NumbersLength = typeof numbers["length"]; // number
+```
+
+Если использовать `array[number]`, или `array[0]` (или любой другой индекс), то получим тоже самое, что при `typeof array`, только без `[]`.
+
+```ts
+const numbers = [1, null, true, "4", () => {}];
+
+// string | number | boolean | (() => void) | null
+type NumbersElements1 = typeof numbers[number]; 
+type NumbersElements2 = typeof numbers[0];
 ```
 
 Также можно обращаться по индексу. Так как массив динамический, то вернётся объединение из элементов в массиве.
-
-```ts
-const numbers = [1, 2, 3, "4"];
-
-type NumbersElements = typeof numbers[0];
-```
 
 Если нужно расширить массив, то можно использовать оператор `...`, например, дженерик `Push` принимает массив и элемент, и при помощи `...` создаёт новый массив, ограничение `extends unknown[]` нужно для того, чтобы указать, что передать можно только массив.
 
@@ -396,6 +402,8 @@ type ExtactLength = Extract<ArrayKeys, "length">; // "length"
 type ExtractAt = Extract<ArrayKeys, "at">; // "at"
 ```
 
+> Редко когда применяется `keyof` на массивы.
+
 https://typehero.dev/challenge/push
 
 ## Tuples (кортежи)
@@ -405,8 +413,8 @@ https://typehero.dev/challenge/push
 Для создания кортежа достаточно использовать возле массива `as const`. Важно то, что использовать следует возле значения массива, а не возле типа.
 
 ```ts
-const tuple = [1, "2", true, null] // (string | number | boolean | null)[]
-const tuple2 = [1, "2", true, null] as const; // readonly [1, "2", true, null]
+const array = [1, "2", true, null] // (string | number | boolean | null)[]
+const tuple = [1, "2", true, null] as const; // readonly [1, "2", true, null]
 ```
 
 Благодаря тому, что массив теперь неизменяемый возвращаются литералы, а не просто типы.
@@ -414,14 +422,30 @@ const tuple2 = [1, "2", true, null] as const; // readonly [1, "2", true, null]
 Также, теперь при использовании `tuple["length"]` возвращается литерал, а не просто тип `number`.
 
 ```ts
-type Tuple2Length = typeof tuple2["length"];
+type TupleLength = typeof tuple["length"]; // 4
 ```
 
-Также, если использовать `tuple[number]`, то получим юнион из литералов, а не из типов.
+Также, если использовать `tuple[number]` или `tuple[0]` (или любой другой индекс), то получим юнион из литералов, а не из типов.
 
 ```ts
-type Tuple2Items = typeof tuple2[number];
+type TupleItems1 = typeof tuple[number]; // true | 1 | "2" | null
+type TupleItems2 = typeof tuple[0]; // true | 1 | "2" | null
 ```
+
+Применение `keyof` на кортеж вернёт `number` (в него собираются индексы), литералы индексов в виде строк и методы со свойствами из `Array.prototype`, исключая те, которые могут изменять массив `push`, `pop`, ...
+
+```ts
+const tuple = [1, "2", true, null] as const;
+
+type TupleKeys = keyof typeof tuple;
+
+type ExtractNumber = Extract<TupleKeys, number>; // number
+type ExtractString = Extract<TupleKeys, string>; // "2" | "0" | "1" | "3" | "length" | "toString" | ...
+type ExtractPush = Extract<TupleKeys, "push">; // never
+type ExtractSlice = Extract<TupleKeys, "slice">; // "slice"
+```
+
+> Редко когда применяется `keyof` на кортежи.
 
 Если нужно, чтобы в дженерик мог передаваться кортеж, то нужно использовать `extends readonly any[]`. Такая запись позволит передавать и массивы, и кортежи.
 
