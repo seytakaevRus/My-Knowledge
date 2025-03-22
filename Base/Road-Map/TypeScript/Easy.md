@@ -329,14 +329,64 @@ https://typehero.dev/challenge/readonly
 type MyPick<Type, Keys extends keyof Type> = {
 	[Property in keyof Type as Property extends Keys ? Property : never]: Type[Property];
 };
+
+const example = {
+	number: 42,
+	string: "Hello",
+	boolean: true,
+};
+
+type A = MyPick<typeof example, "number"> // { number: "number" }
 ```
 
-1. `Property in keyof Type` перебирает ключи из `Type`;
-2. 
+1. `Keys extends keyof Type` накладывает ограничение на `Keys`, дженерик должен принимать в себя только те типы, которые являются ключами `Type`;
+2. `Property in keyof Type` перебирает ключи из `Type`;
+3. `as` говорит о том, что дальше будет идти инструкция, которая вернёт ключ;
+4. `Property extends Keys ? Property : never`, возвращает либо сам ключ, либо `never`, и в таком случае ключ пропускается. 
 
+Если `extends` перенести из ключа в значение, то ключи бы не удалялись, просто значения у них было бы, либо оригинальным, либо `never`.
+
+```ts
+type WrongMyPick<Type, Keys extends keyof Type> = {
+	[Property in keyof Type]: Property extends Keys ? Property : never;
+};
+
+const example = {
+	number: 42,
+	string: "Hello",
+	boolean: true,
+};
+
+type A = WrongMyPick<typeof example, "number"> // { number: "number", string: never, boolean: never }
+```
+
+Интересно то, что выше `MyPick` можно реализовать проще. При переборе типа обычно пишем `in keyof Type`, который перебирает ключи из объединение, а тут мы сразу передали нужное объединение и достаём из него ключи.
+
+```ts
+type MyPick<Type, Keys extends keyof Type> = {
+	[Property in Keys]: Type[Property];
+};
+```
 
 https://typehero.dev/challenge/pick
 
+### Изменение ключей
+
+Также оператор `as` может использоваться для изменение ключей, например, добавить к каждому ключу `_` в начало. В `Property` может содержаться `number | string | symbol`, поэтому при помощи `Extract` `Property` приводится к строке.
+
+```ts
+type AddUnderscore<Type> = {
+	[Property in keyof Type as `_${Extract<Property, string>}`]: Type[Property];
+};
+
+const example = {
+	number: 42,
+	string: "Hello",
+	boolean: true,
+};
+
+type A = AddUnderscore<typeof example>; // { _number: number, _string: string, _boolean: boolean }
+```
 ## Arrays (массивы)
 
 Для создания типа массива достаточно использовать `[]` или дженерик `Array`.
