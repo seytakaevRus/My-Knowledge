@@ -780,3 +780,15 @@ F1<true>, который превратится в <G>() => G extends true ? 1 :
 
 TS сравнит сравнит <G>() => G extends true ? 1 : 0 и <G>() => G extends boolean ? 1 : 0, и выдаст, что они не одинаковые
 ```
+
+TODO: Что насчёт этого?
+
+```ts
+type Equal<T, U> = (() => T) extends (() => U) ? 1 : 0;
+type StrictEqual<T, U> = Equal<T, U> extends Equal<U, T> ? true : false;
+
+type A = StrictEqual<true, boolean>;
+type B = StrictEqual<boolean, true>;
+type C = StrictEqual<true, true>;
+type D = StrictEqual<true, true>;
+```
