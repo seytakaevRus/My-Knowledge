@@ -792,3 +792,18 @@ type B = StrictEqual<boolean, true>;
 type C = StrictEqual<true, true>;
 type D = StrictEqual<true, true>;
 ```
+
+## Includes
+
+```ts
+type Includes<Array extends readonly any[], Item> = InnerIncludes<Array[number], Item> extends never ? false : InnerIncludes<Array[number], Item>;
+type InnerIncludes<Union, Item> = Union extends Item ? StrictEqual<Union, Item> : never;
+
+type Equal<T, U> = (() => T) extends (() => U) ? 1 : 0;
+type StrictEqual<T, U> = Equal<T, U> extends Equal<U, T> ? true : false;
+
+type A = Includes<['Kars', 'Esidisi', 'Wamuu', 'Santana'], 'Kars'>
+type B = Includes<[boolean], true>
+
+type C = InnerIncludes<boolean, true>;
+```
