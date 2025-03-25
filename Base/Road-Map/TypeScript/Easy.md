@@ -780,20 +780,15 @@ F1<true>, который превратится в <G>() => G extends true ? 1 :
 
 TS сравнит сравнит <G>() => G extends true ? 1 : 0 и <G>() => G extends boolean ? 1 : 0, и выдаст, что они не одинаковые
 ```
-
-TODO: Что насчёт этого?
-
-```ts
-type Equal<T, U> = (() => T) extends (() => U) ? 1 : 0;
-type StrictEqual<T, U> = Equal<T, U> extends Equal<U, T> ? true : false;
-
-type A = StrictEqual<true, boolean>;
-type B = StrictEqual<boolean, true>;
-type C = StrictEqual<true, true>;
-type D = StrictEqual<true, true>;
-```
-
 ## Includes
+
+Нужно реализовать дженерик `Includes<Array, Item>`, который принимает тип массива и тип, дженерик проводит строгое соответствие между `Item` и типом из `Array` и если они совпадают, то возвращает `true`, иначе возвращает `false`.
+
+Первая идея, которая пришла в голову была использовать `Array[number]`, чтобы получить объединение из типов элементов в массиве, а затем проходимся по каждому элементу, используя [[Easy#Distributive conditional types (распределительные условных типов)|дистрибутивный тип]].
+
+Но, если в массиве будет тип, например, `boolean`, который при распределении распадается на другие типы, `true` и `false`, то код корректно не будет работать ([[Easy#Типы, которые могут распадаться на более простые|типы, которые могут распадаться]]). Поэтому нужно искать другой подход перебора массива.
+
+Из `JS` мы знаем, что массив можно перебрать итеративно и рекурсивно, раз итеративно не подошло, сделаем это рекурсивно.
 
 ```ts
 type Includes<Array extends readonly any[], Item> = InnerIncludes<Array[number], Item> extends never ? false : InnerIncludes<Array[number], Item>;
@@ -807,3 +802,56 @@ type B = Includes<[boolean], true>
 
 type C = InnerIncludes<boolean, true>;
 ```
+
+## Типы, которые могут распадаться на более простые
+
+Как было показано в [[Easy#Includes|Includes]] есть типы, которые распадаются на более простые, если использовать дженерики и условные типы.
+
+### boolean
+
+Тип `boolean` распадается на `true` и `false`.
+
+```ts
+type DistributiveBoolean<T extends boolean> = T extends true ? "yes" : "no";
+
+type A = DistributiveBoolean<boolean>; // "yes" | "no"
+```
+
+### Пользовательское объединение
+
+Всё, что является объединением также распадается на более простые типы.
+
+```ts
+type DistributiveCustomUnion<T> = T extends "a" ? "yes" : "no";
+
+type B = DistributiveCustomUnion<"a" | "b">; // "yes" | "no"
+```
+
+### any
+
+Так как `any` может быть чем угодно, то и распадается оно на что угодно.
+
+```ts
+type DistributiveAny<T extends any> = T extends "" ? "yes" : "no";
+
+type C = DistributiveAny<any>; // "yes" | "no"
+```
+
+### Что насчёт `number` и `string`
+
+Типы `number` и `string` являются отдельными типами, которые представляют из себя бесконечное множество литералов чисел и строк соответственно. И в отличие от `any`, который буквально обозначает "любой тип", `number` и `string` не распадаются на литералы. Это дизайнерское решение разработчиков `TS`.
+
+```ts
+type NonDistributiveNumber<T extends number> = T extends 1 ? "yes" : "no";
+
+type A = NonDistributiveNumber<1 | 2>; // "yes" | "no"
+type B = NonDistributiveNumber<number> // "no"
+```
+
+```ts
+type NonDistributiveString<T extends string> = T extends "1" ? "yes" : "no";
+
+type C = NonDistributiveString<"1" | "2">; // "yes" | "no"
+type D = NonDistributiveString<string> // "no"
+```
+
