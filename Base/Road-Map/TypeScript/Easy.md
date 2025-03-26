@@ -803,6 +803,17 @@ type B = Includes<[boolean], true>
 type C = InnerIncludes<boolean, true>;
 ```
 
+```ts
+type StrictEqual<T, U> = (<G>() => G extends T ? 1 : 0) extends (<G>() => G extends U ? 1 : 0) ? true : false;
+
+type Includes<Array extends readonly any[], Item> =
+	Array extends [infer FirstItem, ...infer Rest]
+		? StrictEqual<FirstItem, Item> extends false 
+			? Includes<Rest, Item>
+			: true
+		: false;
+```
+
 ## Типы, которые могут распадаться на более простые
 
 Как было показано в [[Easy#Includes|Includes]] есть типы, которые распадаются на более простые, если использовать дженерики и условные типы.
