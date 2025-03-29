@@ -403,6 +403,16 @@ type MyPick<Type, Keys extends keyof Type> = {
 
 https://typehero.dev/challenge/pick
 
+Ещё можно таким образом реализовать `MyOmit`, который принимает тип и ключи из этого типа, дженерик возвращает новый тип, из которого удалены переданные ключи.
+
+```ts
+type MyOmit<Type, Keys extends keyof Type> = {
+	[Property in keyof Type as Property extends Keys ? never : Property]: Type[Property];
+};
+```
+
+https://typehero.dev/challenge/omit
+
 ### Изменение ключей
 
 Также оператор `as` может использоваться для изменение ключей, например, добавить к каждому ключу `_` в начало. В `Property` может содержаться `number | string | symbol`, поэтому при помощи `Extract` `Property` приводится к строке.
@@ -717,6 +727,26 @@ type F = MyAwaited<"3"> // "3"
 
 В дженерике используется `PromiseLike` вместо `Promise`, чтобы принимать объекты, у которых реализован метод `then` (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#thenables). Далее проверяем, является ли `T` таким объектом и если да заходим в рекурсию, это нужно для снятия вложенных типов `Promise`, если `T` это не промис-подобный объект, то возвращаем его.
 
+### Вывод последнего элемента из массива
+
+Написать дженерик `Last`, который принимает тип массива и возвращает его последний элемент.
+
+```ts
+type Last<T extends any[]> = T extends [...infer Rest, infer LastItem] ? LastItem : never;
+```
+
+Ограничиваем `T`, чтобы можно было передать только массив. Далее проверяем является ли `T` массивом и при помощи `[...infer Rest, infer LastItem]` в `Rest` будет положен юнион из типов всех элементов, кроме последнего, а в `LastItem` как раз последний элемент.
+
+Интересно, что можно сделать и без использования `infer`.
+
+```ts
+type Last<T extends any[]> = [never, ...T][T['length']];
+```
+
+Т
+
+https://typehero.dev/challenge/last-of-array
+
 ## Strict type equality (строгое равенство типов)
 
 Нужно создать дженерик `StrictEqual`, который бы возвращал `true`, если типы строго равны и `false` в противном случае. Что значит строго? Это значит что тип равен только себе, то есть `StrictEqual<true, true>` должен вернуть `true`, а `StrictEqual<true, boolean>` вернуть `false`.
@@ -791,19 +821,6 @@ TS сравнит сравнит <G>() => G extends true ? 1 : 0 и <G>() => G e
 Из `JS` мы знаем, что массив можно перебрать итеративно и рекурсивно, раз итеративно не подошло, сделаем это рекурсивно.
 
 ```ts
-type Includes<Array extends readonly any[], Item> = InnerIncludes<Array[number], Item> extends never ? false : InnerIncludes<Array[number], Item>;
-type InnerIncludes<Union, Item> = Union extends Item ? StrictEqual<Union, Item> : never;
-
-type Equal<T, U> = (() => T) extends (() => U) ? 1 : 0;
-type StrictEqual<T, U> = Equal<T, U> extends Equal<U, T> ? true : false;
-
-type A = Includes<['Kars', 'Esidisi', 'Wamuu', 'Santana'], 'Kars'>
-type B = Includes<[boolean], true>
-
-type C = InnerIncludes<boolean, true>;
-```
-
-```ts
 type StrictEqual<T, U> = (<G>() => G extends T ? 1 : 0) extends (<G>() => G extends U ? 1 : 0) ? true : false;
 
 type Includes<Array extends readonly any[], Item> =
@@ -813,6 +830,8 @@ type Includes<Array extends readonly any[], Item> =
 			: true
 		: false;
 ```
+
+Как работает `StrictEqual` можно посмотреть [[Easy#Strict type equality (строгое равенство типов)|здесь]]. Идея состоит в том, чтобы вытягивать из `Array` первый элемент и остаток, первый сравнивается с `Item` и если тот даёт `false`, то переходим в следующий вызов рекурсии, иначе выходим из рекурсии. Благодаря конструкции `[infer FirstItem, ...infer Rest]` можно получить первый элемент и остаток типа массива.
 
 ## Типы, которые могут распадаться на более простые
 
