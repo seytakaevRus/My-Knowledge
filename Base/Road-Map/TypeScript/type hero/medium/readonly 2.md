@@ -54,12 +54,3 @@ type C = MyReadonly2<Todo2, 'title' | 'description'>; // { readonly title: strin
 type D = MyReadonly2<Todo2, 'description'>; // { readonly title: string, readonly description?: string, completed: boolean }
 type E = MyReadonly2<Todo2, 'invalid'>; // error
 ```
-
----
-
-TODO: Добавить свои реализации Omit и Readonly
-## Решение 2
-
-```ts
-
-```

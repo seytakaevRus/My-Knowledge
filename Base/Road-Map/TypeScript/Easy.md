@@ -5,31 +5,31 @@
 Тип `never` обозначает пустоту. Если объединить этот тип с другими, то `never` просто удалится из объединения. Потому что, если к пустоте добавить что-то, то пустота исчезнет.
 
 ```ts
-type A = string | never;   // string
-type B = number | never;   // number
-type C = boolean | never;  // boolean
-type D = any | never;      // any
-type E = unknown | never;  // unknown
-type F = void | never;     // void
+type A = string | never; // string
+type B = number | never; // number
+type C = boolean | never; // boolean
+type D = any | never; // any
+type E = unknown | never; // unknown
+type F = void | never; // void
 ```
 
 Любая из функций ниже вернёт `string`, хотя ошибка в ней может быть выброшена. `TS` удаляет тип `never`, если есть ещё тип.
 
 ```ts
 const someFunction1 = (value: 0 | 1) => {
-	if (value === 0) {
-		return "Victory";
-	}
+  if (value === 0) {
+    return "Victory";
+  }
 
-	throw new Error("Incorrect choice");
+  throw new Error("Incorrect choice");
 };
 
 const someFunction2 = (value: 0 | 1) => {
-	if (value === 0) {
-		throw new Error("Incorrect choice");
-	}
+  if (value === 0) {
+    throw new Error("Incorrect choice");
+  }
 
-	return "Victory";
+  return "Victory";
 };
 ```
 
@@ -44,29 +44,29 @@ const someFunction2 = (value: 0 | 1) => {
 ```ts
 const thrownError = () => {
   throw new Error("");
-}
+};
 ```
 
 Либо если функция не сможет завершить своего выполнение из-за бесконечного цикла.
 
 ```ts
 const infiniteLoop = () => {
-	while (true) {}
-}
+  while (true) {}
+};
 ```
 
 Также `TS` может сам определить тип переменной как `never`, если мы делаем проверки в `if/else/else if` или `switch/case` и обрабатываем вариант, который никогда не сможет произойти.
 
 ```ts
 const someFunction = (choice: 0 | 1) => {
-	if (choice === 0) {
-		console.log("Zero", choice); // 0
-	} else if (choice === 1) {
-		console.log("One", choice); // 1
-	} else {
-		choice // never
-	}
-}
+  if (choice === 0) {
+    console.log("Zero", choice); // 0
+  } else if (choice === 1) {
+    console.log("One", choice); // 1
+  } else {
+    choice; // never
+  }
+};
 ```
 
 ### Когда нам стоит использовать never?
@@ -74,9 +74,9 @@ const someFunction = (choice: 0 | 1) => {
 Предположим, что у нас есть несколько узлов, у которых есть поле `type` с литералом конкретного узла и свойствами, которые встречаются только у определенного узла.
 
 ```ts
-type PointNode = { type: "point", parameterId: number, name: string };
-type CommonNode = { type: "common", name: string }
-type ImageNode = { type: "image", base64: string };
+type PointNode = { type: "point"; parameterId: number; name: string };
+type CommonNode = { type: "common"; name: string };
+type ImageNode = { type: "image"; base64: string };
 
 type AppNode = PointNode | CommonNode | ImageNode;
 ```
@@ -85,20 +85,20 @@ type AppNode = PointNode | CommonNode | ImageNode;
 
 ```ts
 const doSomeLogic = (node: AppNode) => {
-	if (node.type === "point") {
-		doSomeLogicWithPointNode(node);
-	} else if (node.type === "common") {
-		doSomeLogicWithCommonNode(node);
-	} else if (node.type === "image") {
-		doSomeLogicWithImageNode(node);
-	}
-}
+  if (node.type === "point") {
+    doSomeLogicWithPointNode(node);
+  } else if (node.type === "common") {
+    doSomeLogicWithCommonNode(node);
+  } else if (node.type === "image") {
+    doSomeLogicWithImageNode(node);
+  }
+};
 ```
 
 Теперь мы хотим добавить новый узел `TextNode`.
 
 ```ts
-type TextNode = { type: "text", fontSize: number };
+type TextNode = { type: "text"; fontSize: number };
 
 type AppNode = PointNode | CommonNode | ImageNode | TextNode;
 ```
@@ -115,20 +115,20 @@ doSomeLogic({ type: "text", fontSize: 14 });
 
 ```ts
 const handleNever = (node: never) => {
-	throw new Error("Unexpected node: ", node);
-}
+  throw new Error("Unexpected node: ", node);
+};
 
 const doSomeLogic = (node: AppNode) => {
-	if (node.type === "point") {
-		doSomeLogicWithPointNode(node);
-	} else if (node.type === "common") {
-		doSomeLogicWithCommonNode(node);
-	} else if (node.type === "image") {
-		doSomeLogicWithImageNode(node);
-	} else {
-		handleNever(node);
-	}
-}
+  if (node.type === "point") {
+    doSomeLogicWithPointNode(node);
+  } else if (node.type === "common") {
+    doSomeLogicWithCommonNode(node);
+  } else if (node.type === "image") {
+    doSomeLogicWithImageNode(node);
+  } else {
+    handleNever(node);
+  }
+};
 ```
 
 Теперь если мы добавим в `AppNode` узел `TextNode` и вызовем с ним `doSomeLogic`, то увидим, что `TextNode` не соответствует типу `never`. И ведь логично, мы написали обработчики для случаев, когда тип равен `point`, `common`, `image`, поэтому `TS` вычислил тип как `text`, а литерал `text` не равен типу `never`, поэтому и ошибка.
@@ -143,8 +143,8 @@ const doSomeLogic = (node: AppNode) => {
 - Функции `createError` и `createSuccess`, которые возвращают соответствующие типы.
 
 ```ts
-type ErrorT = { kind: "error", error: string };
-type Success<T> = { kind: "success", value: T };
+type ErrorT = { kind: "error"; error: string };
+type Success<T> = { kind: "success"; value: T };
 type Result<T> = ErrorT | Success<T>;
 
 const createError = (error: string): ErrorT => ({
@@ -171,10 +171,10 @@ const safe = <T>(
     return createSuccess(result);
   } catch (error: unknown) {
     if (error instanceof Error) {
-			return createError(`Error: ${error?.message ?? "unknown"}`);
-		}
+      return createError(`Error: ${error?.message ?? "unknown"}`);
+    }
 
-		return createError("Unknown Error");
+    return createError("Unknown Error");
   }
 };
 ```
@@ -198,127 +198,6 @@ if (result.kind === "error") {
   console.log(result.value);
 }
 ```
-
-## Mapped object types (перебор типа). Продолжение
-
-### Модификаторы
-
-При переборе типа можно добавлять или удалять модификаторы. Всего есть два модификатор:
-
-- `readonly` - модификатор, говорящий, что поле только для чтения;
-- `?` - модификатор, говорящий, что поле опциональное.
-
-`+` добавляет модификатор, а `-` его удаляет, использование без знака `readonly` и `?` равносильно использованию `+`.
-
-```ts
-const customObject = {
-  number: 5,
-  string: "435",
-  array: [1, 2, 3],
-  object: {},
-}
-
-type CustomObject = typeof customObject;
-
-type MyReadonly<T> = {
-  readonly [Key in keyof T]: T[Key];
-};
-type ReadonlyCustomObject = MyReadonly<CustomObject>;
-
-type MyMutable<T> = {
-  -readonly [Key in keyof T]: T[Key];
-};
-type MutableCustomObject = MyMutable<ReadonlyCustomObject>;
-
-type MyPartial<T> = {
-  [Key in keyof T]?: T[Key];
-}
-type PartialCustomObject = MyPartial<CustomObject>;
-
-type MyRequired<T> = {
-  [Key in keyof T]-?: T[Key];
-}
-type RequiredCustomObject = MyRequired<PartialCustomObject>;
-```
-
-https://typehero.dev/challenge/readonly
-
-### Удаление ключей
-
-При переборе типов есть возможность удалять это делается при помощи оператора `as`.
-
-```ts
-type MyPick<Type, Keys extends keyof Type> = {
-	[Property in keyof Type as Property extends Keys ? Property : never]: Type[Property];
-};
-
-const example = {
-	number: 42,
-	string: "Hello",
-	boolean: true,
-};
-
-type A = MyPick<typeof example, "number"> // { number: "number" }
-```
-
-1. `Keys extends keyof Type` накладывает ограничение на `Keys`, дженерик должен принимать в себя только те типы, которые являются ключами `Type`;
-2. `Property in keyof Type` перебирает ключи из `Type`;
-3. `as` говорит о том, что дальше будет идти инструкция, которая вернёт ключ;
-4. `Property extends Keys ? Property : never`, возвращает либо сам ключ, либо `never`, и в таком случае ключ пропускается. 
-
-Если `extends` перенести из ключа в значение, то ключи бы не удалялись, просто значения у них было бы, либо оригинальным, либо `never`.
-
-```ts
-type WrongMyPick<Type, Keys extends keyof Type> = {
-	[Property in keyof Type]: Property extends Keys ? Property : never;
-};
-
-const example = {
-	number: 42,
-	string: "Hello",
-	boolean: true,
-};
-
-type A = WrongMyPick<typeof example, "number"> // { number: "number", string: never, boolean: never }
-```
-
-Интересно то, что выше `MyPick` можно реализовать проще. При переборе типа обычно пишем `in keyof Type`, который перебирает ключи из объединение, а тут мы сразу передали нужное объединение и достаём из него ключи.
-
-```ts
-type MyPick<Type, Keys extends keyof Type> = {
-	[Property in Keys]: Type[Property];
-};
-```
-
-https://typehero.dev/challenge/pick
-
-Ещё можно таким образом реализовать `MyOmit`, который принимает тип и ключи из этого типа, дженерик возвращает новый тип, из которого удалены переданные ключи.
-
-```ts
-type MyOmit<Type, Keys extends keyof Type> = {
-	[Property in keyof Type as Property extends Keys ? never : Property]: Type[Property];
-};
-```
-
-https://typehero.dev/challenge/omit
-
-### Изменение ключей
-
-Также оператор `as` может использоваться для изменение ключей, например, добавить к каждому ключу `_` в начало. В `Property` может содержаться `number | string | symbol`, поэтому при помощи `Extract` `Property` приводится к строке.
-
-```ts
-type AddUnderscore<Type> = {
-	[Property in keyof Type as `_${Extract<Property, string>}`]: Type[Property];
-};
-
-const example = {
-	number: 42,
-	string: "Hello",
-	boolean: true,
-};
-
-type A = AddUnderscore<typeof example>; // { _number: number, _string: string, _boolean: boolean }
-```
 ## Arrays (массивы)
 
 Для создания типа массива достаточно использовать `[]` или дженерик `Array`.
@@ -339,14 +218,14 @@ const numbers = [1, null, true, "4", () => {}];
 type NumbersType = typeof numbers; // (string | number | boolean | (() => void) | null)[]
 ```
 
-> Массивы изменяемые, поэтому `TS` не может дать гарантирую насчёт длины и элементов в массиве. 
+> Массивы изменяемые, поэтому `TS` не может дать гарантирую насчёт длины и элементов в массиве.
 
 Если использовать `array["length"]`, то получим только тип `number`.
 
 ```ts
 const numbers = [1, null, true, "4", () => {}];
 
-type NumbersLength = typeof numbers["length"]; // number
+type NumbersLength = (typeof numbers)["length"]; // number
 ```
 
 Если использовать `array[number]`, или `array[0]` (или любой другой индекс), то получим тоже самое, что при `typeof array`, только без `[]`.
@@ -355,8 +234,8 @@ type NumbersLength = typeof numbers["length"]; // number
 const numbers = [1, null, true, "4", () => {}];
 
 // string | number | boolean | (() => void) | null
-type NumbersElements1 = typeof numbers[number]; 
-type NumbersElements2 = typeof numbers[0];
+type NumbersElements1 = (typeof numbers)[number];
+type NumbersElements2 = (typeof numbers)[0];
 ```
 
 Также можно обращаться по индексу. Так как массив динамический, то вернётся объединение из элементов в массиве.
@@ -408,11 +287,11 @@ https://typehero.dev/challenge/push
 
 ## Преобразование массива/кортежа в объект
 
-Раз нужно преобразовать в объект, то тут подойдёт [[Basic#Mapped object types (перебор типа)|перебор типа]]. С тем отличием, что `Property in keyof T` даст индексы и методы массива/кортежа, а нам нужно получить доступ к элементам массива, поэтому используем `Property in T[number]`. Ограничение `readonly any[]` позволяет прокидывать внутрь массивы и кортежи.
+Раз нужно преобразовать в объект, то тут подойдёт [[Basic#Mapped object types (перебор типа)|перебор типа]]. С тем отличием, что `Key in keyof T` даст индексы и методы массива/кортежа, а нам нужно получить доступ к элементам массива, поэтому используем `Key in T[number]`. Ограничение `readonly any[]` позволяет прокидывать внутрь массивы и кортежи.
 
 ```ts
 type TupleToObject<T extends readonly any[]> = {
-	[Property in T[number]]: Property;
+  [Key in T[number]]: Key;
 };
 
 const a = [1, 2, 3] as const;
@@ -425,7 +304,15 @@ type B = TupleToObject<typeof b>; // { [x: symbol]: symbol, true: "true", 6: "6"
 Как мы помним в `JS` ключами объекта могут быть только `string` или `symbol`, всё остальное просто преобразуется в `string`. В `TS` добавляется, что `number` также может быть ключом, так как есть обращение к массиву по индексу. Поэтому, если в `TypluToObject` закинуть не `string`, `number` или `symbol`, то `TS` будет это игнорировать.
 
 ```ts
-const c = [() => {}, {a: "a"}, true, false, null, undefined, BigInt(1)] as const;
+const c = [
+  () => {},
+  { a: "a" },
+  true,
+  false,
+  null,
+  undefined,
+  BigInt(1),
+] as const;
 
 type C = TupleToObject<typeof c>; // {}
 ```
@@ -434,14 +321,22 @@ type C = TupleToObject<typeof c>; // {}
 
 ```ts
 type TupleToObject<T extends readonly PropertyKey[]> = {
-	[Property in T[number]]: Property;
+  [Key in T[number]]: Key;
 };
 ```
 
 Теперь этот код будет выдавать ошибку.
 
 ```ts
-const c = [() => {}, {a: "a"}, true, false, null, undefined, BigInt(1)] as const;
+const c = [
+  () => {},
+  { a: "a" },
+  true,
+  false,
+  null,
+  undefined,
+  BigInt(1),
+] as const;
 
 type C = TupleToObject<typeof c>;
 ```
@@ -455,10 +350,9 @@ https://typehero.dev/challenge/tuple-to-object
 Первое, что приходит в голову это использовать оператор `extends`, причём два раза, скажем, есть тип `T` и `U`, то сначала делаем `T extends U`, а затем `U extends T` и проверяем их возвращаемый результат. Для удобства будет использовать `1` и `0`, потому что это всего один символ, хотя можно использовать и привычные `true` с `false`.
 
 ```ts
-type StrictEqual<T, U> =
-  (T extends U ? 1 : 0) extends (U extends T ? 1 : 0)
-    ? true
-    : false;
+type StrictEqual<T, U> = (T extends U ? 1 : 0) extends (U extends T ? 1 : 0)
+  ? true
+  : false;
 ```
 
 Но если проверить результат, то окажется, что `StrictEqual` не так, как ожидалось.
@@ -511,6 +405,7 @@ F1<true>, который превратится в <G>() => G extends true ? 1 :
 
 TS сравнит сравнит <G>() => G extends true ? 1 : 0 и <G>() => G extends boolean ? 1 : 0, и выдаст, что они не одинаковые
 ```
+
 ## Includes
 
 Нужно реализовать дженерик `Includes<Array, Item>`, который принимает тип массива и тип, дженерик проводит строгое соответствие между `Item` и типом из `Array` и если они совпадают, то возвращает `true`, иначе возвращает `false`.
@@ -522,14 +417,20 @@ TS сравнит сравнит <G>() => G extends true ? 1 : 0 и <G>() => G e
 Из `JS` мы знаем, что массив можно перебрать итеративно и рекурсивно, раз итеративно не подошло, сделаем это рекурсивно.
 
 ```ts
-type StrictEqual<T, U> = (<G>() => G extends T ? 1 : 0) extends (<G>() => G extends U ? 1 : 0) ? true : false;
+type StrictEqual<T, U> = (<G>() => G extends T ? 1 : 0) extends <
+  G
+>() => G extends U ? 1 : 0
+  ? true
+  : false;
 
-type Includes<Array extends readonly any[], Item> =
-	Array extends [infer FirstItem, ...infer Rest]
-		? StrictEqual<FirstItem, Item> extends false 
-			? Includes<Rest, Item>
-			: true
-		: false;
+type Includes<Array extends readonly any[], Item> = Array extends [
+  infer FirstItem,
+  ...infer Rest
+]
+  ? StrictEqual<FirstItem, Item> extends false
+    ? Includes<Rest, Item>
+    : true
+  : false;
 ```
 
 Как работает `StrictEqual` можно посмотреть [[Easy#Strict type equality (строгое равенство типов)|здесь]]. Идея состоит в том, чтобы вытягивать из `Array` первый элемент и остаток, первый сравнивается с `Item` и если тот даёт `false`, то переходим в следующий вызов рекурсии, иначе выходим из рекурсии. Благодаря конструкции `[infer FirstItem, ...infer Rest]` можно получить первый элемент и остаток типа массива.
@@ -576,13 +477,12 @@ type C = DistributiveAny<any>; // "yes" | "no"
 type NonDistributiveNumber<T extends number> = T extends 1 ? "yes" : "no";
 
 type A = NonDistributiveNumber<1 | 2>; // "yes" | "no"
-type B = NonDistributiveNumber<number> // "no"
+type B = NonDistributiveNumber<number>; // "no"
 ```
 
 ```ts
 type NonDistributiveString<T extends string> = T extends "1" ? "yes" : "no";
 
 type C = NonDistributiveString<"1" | "2">; // "yes" | "no"
-type D = NonDistributiveString<string> // "no"
+type D = NonDistributiveString<string>; // "no"
 ```
-
