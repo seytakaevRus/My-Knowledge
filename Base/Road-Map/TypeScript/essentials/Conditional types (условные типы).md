@@ -1,4 +1,3 @@
-
 Благодаря ключевому слову `extends` можно в зависимости от условия возвращать один из двух типов.
 
 ```ts
@@ -75,7 +74,6 @@ type First<T extends unknown[]> = T extends [] ? never : T[0];
 
 https://typehero.dev/challenge/first-of-array
 https://typehero.dev/challenge/if
-
 ## Distributive conditional types (распределительные условных типов)
 
 Если нужно изменить элементы объединения или отфильтровать объединение, то тут нужно использовать сочетание условного типа и [[Basic#Generic (общий тип)|дженериков]].
@@ -106,5 +104,5 @@ type UnionObject = UnionToObject<Union>; // { type: undefined } | { type: number
 type MyExclude<BaseUnion, UnionWithTypesForDelete> = BaseUnion extends UnionWithTypesForDelete ? never : BaseUnion;
 
 type Union = number | string | null | undefined | symbol;
-type TransformedUnion = MyExclude<Union, null | undefined | symbol>;
+type TransformedUnion = MyExclude<Union, null | undefined | symbol>; // string | number
 ```

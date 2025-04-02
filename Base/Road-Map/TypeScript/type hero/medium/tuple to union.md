@@ -27,9 +27,7 @@ type B = TupleToUnion<[123]>; // 123
 ---
 ## Решение 2
 
-TODO: Вставить ссылку на рекурсивный обход массива.
-
-Можно использовать [[Infer]] и рекурсивный обход массива. Используя `[infer FirstItem, ...infer Rest]`, можно получить тип первого элемента и массив оставшихся типов, и если перед нами массив, то мы возвращает объединение из первого элемента и рекурсивного вызова `TupleToUnion`, в который прокидывает остаток от массива.
+Можно использовать [[Mapped array types (перебор типа массива или кортежа)|рекурсивный перебор]] массива.
 
 ```ts
 type TupleToUnion<Tuple extends readonly unknown[]> = Tuple extends [infer FirstItem, ...infer Rest] ? FirstItem | TupleToUnion<Rest> : never;

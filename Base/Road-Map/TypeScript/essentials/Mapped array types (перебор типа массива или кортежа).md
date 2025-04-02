@@ -55,12 +55,12 @@ type F = Shift<[1, "d", {}, null]>; // ["d", {}, null]
 
 Этот вариант перебора используется тогда же, когда и [[Mapped object types (перебор типа объект)|перебор объекта]], то есть для удаления или изменения элементов.
 
-К примеру, ниже дженерик ниже, заменяет `1` на `one`.
+К примеру, ниже дженерик ниже, заменяет числа на строки.
 
 ```ts
 type MappedIterate<ArrayType extends unknown[]> = {
-    [Key in keyof ArrayType]: ArrayType[Key] extends 1 ? "one" : ArrayType[Key];
+    [Key in keyof ArrayType]: ArrayType[Key] extends number ? `${ArrayType[Key]}` : never
 }
 
-type A = MappedIterate<[1, 2, 3, 4]> // ["one", 2, 3, 4]
+type A = MappedIterate<[1, 2, 3, 4]> // ["1", "2", "3", "4"]
 ```
