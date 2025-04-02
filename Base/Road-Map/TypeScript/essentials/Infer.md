@@ -88,27 +88,7 @@ type C = ElementType<1>; // error + any
 
 ## Вывод типа из промиса
 
-Нужно написать аналог `Awaited`.
-
-```ts
-type MyAwaited<T> = T extends PromiseLike<infer R> ? MyAwaited<R> : T;
-
-type X = Promise<string>
-type Y = Promise<{ field: number }>
-type Z = Promise<Promise<string | number>>
-type Z1 = Promise<Promise<Promise<string | boolean>>>
-type T = { then: (onfulfilled: (arg: number) => any) => any }
-
-type A = MyAwaited<X>; // string
-type B = MyAwaited<Y>; // { field: number }
-type C = MyAwaited<Z>; // string | number
-type D = MyAwaited<Z1>; // string | boolean
-type E = MyAwaited<T>; // number
-type F = MyAwaited<"3"> // "3"
-```
-
-В дженерике используется `PromiseLike` вместо `Promise`, чтобы принимать объекты, у которых реализован метод `then` (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise#thenables). Далее проверяем, является ли `T` таким объектом и если да заходим в рекурсию, это нужно для снятия вложенных типов `Promise`, если `T` это не промис-подобный объект, то возвращаем его.
-
+[[awaited]]
 ## Вывод последнего элемента из массива
 
 Написать дженерик `Last`, который принимает тип массива и возвращает его последний элемент.
