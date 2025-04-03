@@ -95,6 +95,7 @@ type RequiredCustomObject = MyRequired<PartialCustomObject>;
 ```
 
 https://typehero.dev/challenge/readonly
+https://typehero.dev/challenge/mutable
 
 ## Удаление ключей
 
