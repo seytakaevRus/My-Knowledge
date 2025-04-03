@@ -10,6 +10,8 @@ refs:
 ---
 ## Решение 1
 
+Написать про различие `(...args: any[]) => any` и `Function`
+
 ```ts
 type DeepReadonly<Type> = {
 	readonly [Key in keyof Type]: Type[Key] extends object
