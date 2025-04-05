@@ -1,5 +1,6 @@
 ---
 refs:
+  - https://typehero.dev/challenge/deep-readonly
 ---
 ## Описание
 
@@ -15,10 +16,10 @@ refs:
 ```ts
 type DeepReadonly<Type> = {
 	readonly [Key in keyof Type]: Type[Key] extends object
-		? Type[Key] extends Function
+		? Type[Key] extends (...args: any) => any
 			? Type[Key]
 			: DeepReadonly<Type[Key]>
-		: Type[Key];
-};
+		: Type[Key]
+}
 
 ```

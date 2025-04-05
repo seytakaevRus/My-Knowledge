@@ -25,7 +25,7 @@ type MyDogType = LookUp<Cat | Dog, 'dog'> // Dog
 
 TODO: Вставить ссылку на Extract.
 
-Используя [[Conditional types (условные типы)#Distributive conditional types (распределительные условных типов)|распределение типов]] можно перебрать типы из `Union`, а утилита `Extract` позволяет вытаскивать из типа подходящий подтип.
+Используя [[Distributive types (распределение типа)|распределение типа]]] можно перебрать типы из `Union`, а утилита `Extract` позволяет вытаскивать из типа подходящий подтип.
 
 ```ts
 type LookUp<Union extends { type: string }, Type extends Union["type"]> = 

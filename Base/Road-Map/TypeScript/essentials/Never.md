@@ -196,3 +196,18 @@ if (result.kind === "error") {
   console.log(result.value);
 }
 ```
+
+TODO: Дописать про `never extends type ? true : false`
+
+```ts
+type neverCases = [
+	Expect<Equal<never extends boolean ? true : false, true>>,
+	Expect<Equal<never extends number ? true : false, true>>,
+	Expect<Equal<never extends string ? true : false, true>>,
+	Expect<Equal<never extends symbol ? true : false, true>>,
+	Expect<Equal<never extends object ? true : false, true>>,
+	Expect<Equal<never extends [] ? true : false, true>>,
+	Expect<Equal<never extends Function ? true : false, true>>,
+	Expect<Equal<never extends 'wtf' ? true : false, true>>,
+]
+```
