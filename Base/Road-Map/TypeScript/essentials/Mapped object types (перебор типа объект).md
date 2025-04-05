@@ -70,28 +70,45 @@ const customObject = {
   array: [1, 2, 3],
   object: {},
 };
+```
 
-type CustomObject = typeof customObject;
+Сделать тип объекта только для чтения.
 
+```ts
 type MyReadonly<T> = {
   readonly [Key in keyof T]: T[Key];
 };
-type ReadonlyCustomObject = MyReadonly<CustomObject>;
 
+type ReadonlyCustomObject = MyReadonly<typeof customObject>;
+```
+
+Сделать тип объекта доступ для изменения.
+
+```ts
 type MyMutable<T> = {
   -readonly [Key in keyof T]: T[Key];
 };
-type MutableCustomObject = MyMutable<ReadonlyCustomObject>;
 
+type MutableCustomObject = MyMutable MyReadonly<typeof customObject>>;
+```
+
+Сделать все свойства в объекте необязательными.
+
+```ts
 type MyPartial<T> = {
   [Key in keyof T]?: T[Key];
 };
-type PartialCustomObject = MyPartial<CustomObject>;
 
+type PartialCustomObject = MyPartial<typeof customObject>;
+```
+
+Сделать все свойства в объекте обязательными.
+
+```ts
 type MyRequired<T> = {
   [Key in keyof T]-?: T[Key];
 };
-type RequiredCustomObject = MyRequired<PartialCustomObject>;
+type RequiredCustomObject = MyRequired<MyPartial<typeof customObject>>;
 ```
 
 https://typehero.dev/challenge/readonly
@@ -173,3 +190,22 @@ const example = {
 
 type A = AddUnderscore<typeof example>; // { _number: number, _string: string, _boolean: boolean }
 ```
+
+## Рекурсивный перебор типа
+
+Иногда нужно перебрать весь объект, какую бы вложенность он не имел. К примеру, нужно написать `DeepReadonly<Type>`, который принимает `Type` и применяет модификатор `readonly` ко всем свойствам, в `Type` могут быть массивы, объекты и функции.
+
+Нам нужно будет рекурсивно пройтись по всему объекту и для каждого свойства применить утилиту `Readonly`, но прежде нужно посмотреть, как она ведёт себя для разных типов.
+
+```ts
+type A = Readonly<() => {}>; // {}
+type B = Readonly<[1, 2, 3]>; // readonly [1, 2, 3]
+type C = Readonly<{
+	a: 1,
+	b: 2
+}>; // { readonly a: 1; readonly b: 2; }
+type D = Readonly<1> // 1
+type E = Readonly<null>; // null
+```
+
+Как можно заметить, утилита ведёт себя ожидаемо во всех случаях, кроме использования на функции, поэтому этот кейс нужно обработать отдельно.
