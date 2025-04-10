@@ -208,4 +208,66 @@ type D = Readonly<1> // 1
 type E = Readonly<null>; // null
 ```
 
-Как можно заметить, утилита ведёт себя ожидаемо во всех случаях, кроме использования на функции, поэтому этот кейс нужно обработать отдельно.
+Утилита `Readonly` внутри реализована как `mapped types`, раз мы собираемся использовать похожий механизм, то нужно обработать функцию отдельно.
+
+Как правильно ограничить функцию, можно глянуть [[FAQ#`(...args any[]) => any` vs `Function`|здесь]], как правильно ограничить объект, можно глянуть [[FAQ#`Object` vs `{}` vs `object` vs `Record<string, any>` vs `{ [key string] any }`|здесь]]. Дальше при помощи перебора c модификатором `readonly` мы смотрим, если перед нами объект и это не функция, то кидаем его в рекурсию, иначе возвращаем `Type[Key]`.
+
+```ts
+type DeepReadonly<Type> = {
+	readonly [Key in keyof Type]: Type[Key] extends Record<string, any>
+		? Type[Key] extends (...args: any[]) => any
+			? Type[Key]
+			: DeepReadonly<Type[Key]>
+		: Type[Key];
+};
+
+type X1 = {
+  a: () => 22
+  b: string
+  c: {
+    d: boolean
+    e: {
+      g: {
+        h: {
+          i: true
+          j: 'string'
+        }
+        k: 'hello'
+      }
+      l: [
+        'hi',
+        {
+          m: ['hey']
+        },
+      ]
+    }
+  }
+}
+
+type Expected1 = {
+  readonly a: () => 22
+  readonly b: string
+  readonly c: {
+    readonly d: boolean
+    readonly e: {
+      readonly g: {
+        readonly h: {
+          readonly i: true
+          readonly j: 'string'
+        }
+        readonly k: 'hello'
+      }
+      readonly l: readonly [
+        'hi',
+        {
+          readonly m: readonly ['hey']
+        },
+      ]
+    }
+  }
+}
+
+type A = StrictEqual<DeepReadonly<X1>, Expected1> // true;
+```
+
+https://typehero.dev/challenge/deep-readonly

@@ -18,8 +18,6 @@ type Generic<T, K> = T extends K ? never : T;
 
 ## Mapped types (перебор типа)
 
-TODO: Вставить ссылку на readonly
-
 В конструкции ниже:
 
 - Если `T` является объединением, то к каждому типу из `T` применяется перебор типа;
@@ -34,5 +32,8 @@ type Generic<T> = {
 }
 
 type C = Generic<A | B>; // { foo: string, bar: string } | { bar: number, baz: boolean }
-type D = C["bar"]; // string | number
 ```
+
+### Практика
+
+- [[readonly]].
