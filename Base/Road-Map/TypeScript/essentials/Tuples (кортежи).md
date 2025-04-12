@@ -1,14 +1,27 @@
 
-`Кортеж` - неизменяемый массив, поэтому к нему добавляется модификатор `readonly` и меняется поведение в некоторых ситуациях.
+`Кортеж` - тип в `TypeScript`. Является частным случаем массива с фиксированной длинной и типами по позициям. 
+
+---
 ## Создание кортежа
 
-`as const` к массиву даёт кортеж. Кортеж возвращает литералы, а не типы. 
+Создать кортеж можно из массива при помощи `as const`.
 
 ```ts
 const array = [1, "2", true, null] // (string | number | boolean | null)[]
 const tuple = [1, "2", true, null] as const; // readonly [1, "2", true, null]
 ```
 
+С точки зрения значений `array` и `tuple` это массивы, но с точки зрения типов `array` это массив, а `tuple` это кортеж.
+
+> Преобразовать массив в кортеж можно только на уровне значений при помощи `as const`. Нельзя сделать преобразование на уровне типов.
+
+Создать также можно, если указать явно тип кортежа.
+
+```ts
+const tuple: [1, number] = [1, 4];
+```
+
+---
 ## `tuple["length"]`
 
 `tuple["length"]` возвращается литерал, а не просто тип `number`.
@@ -17,6 +30,7 @@ const tuple = [1, "2", true, null] as const; // readonly [1, "2", true, null]
 type TupleLength = typeof tuple["length"]; // 4
 ```
 
+---
 ## `tuple[number]` и `tuple[index]`
 
 `tuple[number]` вернёт объединение из литералов.
@@ -32,6 +46,7 @@ type TupleElement1 = typeof tuple[0]; // 1
 type TupleElement2 = typeof tuple[8]; // error + undefined
 ```
 
+---
 ## `keyof`
 
 `keyof` на кортеж вернёт:
@@ -51,9 +66,10 @@ type ExtractPush = Extract<TupleKeys, "push">; // never
 type ExtractSlice = Extract<TupleKeys, "slice">; // "slice"
 ```
 
-## Ограничение кортежа
+---
+## Ограничение на приём кортежей и массивов
 
-`extends readonly any[]` позволяет передавать как кортежи, так и массивы.
+`extends readonly any[]` ограничивает, чтобы передавать можно было только массивы или кортежи.
 
 ```ts
 type Length<Tuple extends readonly any[]> = Tuple["length"];
@@ -61,28 +77,66 @@ type Length<Tuple extends readonly any[]> = Tuple["length"];
 const array = [1, 2, 3];
 const tuple = [1, 2, 3] as const;
 
-type A = Length<typeof array>; // number
-type B = Length<typeof tuple>; // 3
-type C = Length<[1, 2]>; // 2
+type A = Length<typeof array>; // array, hence returns number
+
+type B = Length<typeof tuple>; // tuple, hence returns 3
+type C = Length<[1, 2]>; // tuple, hence returns 2
 ```
+
+Как было сказано [[Tuples (кортежи)#Создание кортежа|выше]], кортеж можно сделать при помощи `as const`, либо передать явно, поэтому `B` и `C` возвращают литерал.
 
 https://typehero.dev/challenge/length-of-tuple
 
+---
+## Особенности при работе с функциями
+
+Предположим, что нужно создать аналог функции `Promise.all`, но сфокусируемся только на типизации. Функция может принимать массивы и кортежи, функция будет возвращать кортеж, обёрнутый в `Promise`.
+
+Для реализации нужно использовать [[Mapped array types (перебор типа массива или кортежа)#При помощи `mapped object types`|этот метод]] и к каждому элементу применить `Awaited`. Получаем реализацию ниже.
+
+```ts
+declare function PromiseAll<ArrayType extends readonly unknown[]>
+	(values: ArrayType): Promise<{
+		[Key in keyof ArrayType]: Awaited<ArrayType[Key]>
+	}>;
+
+const test1 = PromiseAll([1, 2, "3"]); // Promise<(string | number)[]>
+const test2 = PromiseAll([1, 2, "3"] as const); // Promise<readonly [1, 2, "3"]>
+```
+
+Как видим `test1` вывел `Promise<(string | number)[]>`, а нам нужно выводить кортеж, так как `PromiseAll` не меняет порядок элементов в принимаемом массиве.
+
+Для этого можно использовать "хак" `values: [...ArrayType]`. Благодаря нему `TS` сохраняет структуру переданного массива и на выходе возвращает кортеж.
+
+```ts
+declare function PromiseAll<ArrayType extends readonly unknown[]>
+	(values: [...ArrayType]): Promise<{
+		[Key in keyof ArrayType]: Awaited<ArrayType[Key]>
+	}>;
+
+const test1 = PromiseAll([1, 2, "3"]); // Promise<[number, number, string]>
+const test2 = PromiseAll([1, 2, "3"] as const); // Promise<[1, 2, "3"]>
+```
+
+https://typehero.dev/challenge/promise-all
+
+---
 ## Расширение кортежа
 
 Для расширения используется оператор `...`.
 
 ```ts
-const array = [1, 2, 3];
-const tuple = [4, 5, 6] as const;
+const tuple1 = [1, 2, 3] as const;
+const tuple2 = [4, 5, 6] as const;
 
-type Concat<Array1 extends readonly any[], Array2 extends readonly any[]> = [...Array1, ...Array2];
+type Concat<Tuple1 extends readonly any[], Tuple2 extends readonly any[]> = [...Tuple1, ...Tuple2];
 
-type A = Concat<typeof array, typeof tuple>; // [...number[], 4, 5, 6]
+type A = Concat<typeof tuple1, typeof tuple2>; // [1, 2, 3, 4, 5, 6]
 ```
-
-Кортеж распаковался, а массив превратился в `number[]`, так как `TS` не знает ничего о его длине. 
 
 https://typehero.dev/challenge/concat
 
-TODO: Добавить про `[...T]` https://typehero.dev/challenge/promise-all
+---
+
+
+TODO: Добавить ограничение на приём только кортежей
