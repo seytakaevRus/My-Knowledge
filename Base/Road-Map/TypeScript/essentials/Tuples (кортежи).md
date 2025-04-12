@@ -49,11 +49,11 @@ type TupleElement2 = typeof tuple[8]; // error + undefined
 ---
 ## `keyof`
 
-`keyof` на кортеж вернёт:
+[[keyof]] на кортеж вернёт:
 
 - `number` (в него собираются индексы);
 - литералы индексов в виде строк;
-- методы со свойствами из `Array.prototype`, исключая те, которые могут изменять массив `push`, `pop` и т.д.
+- методы и свойства из `Array.prototype`, исключая те, которые могут изменять массив `push`, `pop` и т.д.
 
 ```ts
 const tuple = [1, "2", true, null] as const;
@@ -67,7 +67,7 @@ type ExtractSlice = Extract<TupleKeys, "slice">; // "slice"
 ```
 
 ---
-## Ограничение на приём кортежей и массивов
+## Ограничение на приём только кортежей и массивов
 
 `extends readonly any[]` ограничивает, чтобы передавать можно было только массивы или кортежи.
 
@@ -123,7 +123,7 @@ https://typehero.dev/challenge/promise-all
 ---
 ## Расширение кортежа
 
-Для расширения используется оператор `...`.
+Для расширения кортежа используется оператор `...`.
 
 ```ts
 const tuple1 = [1, 2, 3] as const;
@@ -137,6 +137,5 @@ type A = Concat<typeof tuple1, typeof tuple2>; // [1, 2, 3, 4, 5, 6]
 https://typehero.dev/challenge/concat
 
 ---
-
 
 TODO: Добавить ограничение на приём только кортежей

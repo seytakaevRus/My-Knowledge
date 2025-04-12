@@ -54,6 +54,7 @@ type MappedTypeWithUndefined<T> = {
 type MappedMoviesByGenre = MappedTypeWithUndefined<MoviesByGenre>;
 ```
 
+---
 ## Модификаторы
 
 При переборе типа можно добавлять или удалять модификаторы. Всего есть два модификатор:
@@ -114,6 +115,7 @@ type RequiredCustomObject = MyRequired<MyPartial<typeof customObject>>;
 https://typehero.dev/challenge/readonly
 https://typehero.dev/challenge/mutable
 
+---
 ## Удаление ключей
 
 При переборе типов есть возможность удалять это делается при помощи оператора `as`.
@@ -173,6 +175,7 @@ type MyOmit<Type, Keys extends keyof Type> = {
 
 https://typehero.dev/challenge/omit
 
+---
 ## Изменение ключей
 
 Также оператор `as` может использоваться для изменение ключей, например, добавить к каждому ключу `_` в начало. В `Key` может содержаться `number | string | symbol`, поэтому при помощи `Extract` `Key` приводится к строке.
@@ -191,6 +194,7 @@ const example = {
 type A = AddUnderscore<typeof example>; // { _number: number, _string: string, _boolean: boolean }
 ```
 
+---
 ## Рекурсивный перебор типа
 
 Иногда нужно перебрать весь объект, какую бы вложенность он не имел. К примеру, нужно написать `DeepReadonly<Type>`, который принимает `Type` и применяет модификатор `readonly` ко всем свойствам, в `Type` могут быть массивы, объекты и функции.
