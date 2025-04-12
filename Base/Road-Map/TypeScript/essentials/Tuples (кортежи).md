@@ -31,13 +31,16 @@ type TupleLength = typeof tuple["length"]; // 4
 ```
 
 ---
-## `tuple[number]` и `tuple[index]`
+## `tuple[number]`
 
 `tuple[number]` вернёт объединение из литералов.
 
 ```ts
 type TupleItems = typeof tuple[number]; // true | 1 | "2" | null
 ```
+
+---
+## `tuple[index]`
 
 `tuple[index]` вернёт конкретный литерал.
 
@@ -92,7 +95,7 @@ https://typehero.dev/challenge/length-of-tuple
 
 Предположим, что нужно создать аналог функции `Promise.all`, но сфокусируемся только на типизации. Функция может принимать массивы и кортежи, функция будет возвращать кортеж, обёрнутый в `Promise`.
 
-Для реализации нужно использовать [[Mapped array types (перебор типа массива или кортежа)#При помощи `mapped object types`|этот метод]] и к каждому элементу применить `Awaited`. Получаем реализацию ниже.
+Раз функция может принимать массивы, то [[#При помощи `infer`|перебор при помощи infer]] не подойдёт. Для реализации нужно использовать [[Arrays (массивы)#При помощи `mapped types`|перебор при помощи mapped types]] и к каждому элементу применить `Awaited`. Получаем реализацию ниже.
 
 ```ts
 declare function PromiseAll<ArrayType extends readonly unknown[]>
@@ -137,5 +140,30 @@ type A = Concat<typeof tuple1, typeof tuple2>; // [1, 2, 3, 4, 5, 6]
 https://typehero.dev/challenge/concat
 
 ---
+## Перебор кортежа
+
+### При помощи `mapped types`
+
+Кортеж можно перебрать при помощи `mapped types` и он не отличается от [[Arrays (массивы)#При помощи `mapped types`|перебора массива]].
+
+Но чем хорош кортеж, так это добавлением перебора при помощи `infer`.
+### При помощи `infer`
+
+Например дженериком ниже можно превратить кортеж в объединение, имитируя использование `T[number]`.
+
+```ts
+type ArrayToUnion<ArrayType extends unknown[]> = ArrayType extends [infer FirstItem, ...infer Rest]
+    ? FirstItem | ArrayToUnion<Rest>
+    : never;
+
+type A = ArrayToUnion<[1, 2, 3, 4]>; // 1 | 2 | 3 | 4
+type B = ArrayToUnion<[]>; // never
+type C = ArrayToUnion<[1, "d", {}, null]>; // {} | 1 | "d" | null
+```
+
+При помощи него можно перебрать кортеж и вернуть на его основе единственное значение, как это сделано в [[includes]].
+
+Ещё можно вернуть новый кортеж, положив туда необходимые данные из базового массива, как это сделано в [[without]]
+
 
 TODO: Добавить ограничение на приём только кортежей

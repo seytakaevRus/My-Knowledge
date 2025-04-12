@@ -26,13 +26,16 @@ type NumbersLength = typeof numbers["length"]; // number
 ```
 
 ---
-## `array[number]` и `array[index]`
+## `array[number]`
 
 `array[number]` вернёт объединение из типов.
 
 ```ts
 type ArrayItems = typeof array[number]; // string | number | boolean | (() => void) | null
 ```
+
+---
+## `array[index]`
 
 `array[index]` также вернёт объединение из типов.
 
@@ -87,3 +90,40 @@ type A = Push<typeof array, "">; // [...number[], ""]
 ```
 
 https://typehero.dev/challenge/push
+
+---
+## Перебор массива
+
+### При помощи `mapped types`
+
+В отличие от [[Mapped object types (перебор типа объект)|перебор объекта]], с помощью которого можно чтобы удалять или изменять элементы, этот способ может только изменять элементы. 
+
+Чтобы `mapped types` возвращал массив `K` должен быть индексом массива.
+
+```ts
+{ [K in keyof T]: ... }
+```
+
+Запись с использованием `as` и применением `never` может сохранять в `Key` индекс массива, а в `ArrayType[Key]` элемент массива, но разрушает структуру массива из-за удаления индекса, поэтому на выходе мы получаем объект.
+
+```ts
+type MappedIterate<ArrayType extends unknown[]> = {
+  [Key in keyof ArrayType as ArrayType[Key] extends 1 ? never : Key]: ArrayType[Key];
+}
+
+type A = MappedIterate<[1, 2, 3, 4]> // { [x: number]: 2 | 1 | 4 | 3; length: 4;  toString: () => string; }
+```
+
+Поэтому этот метод подойдёт только для изменение элементов массива всех или только некоторых с сохранением длины массива (аналог `Array.prototype.map`).
+
+К примеру, ниже дженерик ниже, заменяет числа на строки.
+
+```ts
+type MappedIterate<ArrayType extends unknown[]> = {
+    [Key in keyof ArrayType]: ArrayType[Key] extends number ? `${ArrayType[Key]}` : never
+}
+
+type A = MappedIterate<[1, 2, 3, 4]> // ["1", "2", "3", "4"]
+```
+
+Из более полезного, где `mapped types` подойдёт для массивов - [[Tuples (кортежи)#Особенности при работе с функциями|реализация Promise.all]].
