@@ -13,8 +13,6 @@ T extends U ? X : Y
 T extends infer R ? ... : ...
 ```
 
-TODO: Разбить на группы (функция/массивы/промисы и т.д.)
-
 ---
 ## В массивах
 
@@ -36,12 +34,19 @@ type C = ElementType<1>; // error + any
 ```ts
 type ElementType<Type extends any[]> = Type extends Array<infer Element> ? Element : any;
 ```
-
-TODO: Добавить DeepUnwrapArray
+### Вывод типа элемента из вложенного массива
 
 ```ts
-type A = DeepUnwrapArray<number[][][]>;  // number
-type B = DeepUnwrapArray<string[]>;      // string
+type DeepUnwrapArray<Type extends any[]> = Type extends Array<infer ElementType>
+  ? ElementType extends any[]
+    ? DeepUnwrapArray<ElementType>
+    : ElementType
+  : Type
+
+type A = DeepUnwrapArray<number[][][]>; // number
+type B = DeepUnwrapArray<string[]>; // string
+type C = DeepUnwrapArray<[]>; // never
+type D = DeepUnwrapArray<number> // error + number
 ```
 
 ---
@@ -89,10 +94,16 @@ type B = Reverse<[1]>;            // [1]
 type C = Reverse<[]>;             // []
 type D = Reverse<[true, false, true]>; // [true, false, true] → [true, false, true]
 ```
-
-TODO: Добавить Zip<T1, T2> - объединение двух кортежей по парам
+### Вывод запакованного кортежа
 
 ```ts
+type Zip<Tuple1 extends any[], Tuple2 extends any[], Accumulator extends any[] = []> =
+  Tuple1 extends [infer FirstElement1, ...infer Rest1]
+    ? Tuple2 extends [infer FirstElement2, ...infer Rest2]
+      ? Zip<Rest1, Rest2, [...Accumulator, [FirstElement1, FirstElement2]]>
+      : Accumulator
+    : Accumulator
+
 type A = Zip<[1, 2, 3], ["a", "b", "c"]>; // [[1, "a"], [2, "b"], [3, "c"]]
 type B = Zip<[true, false], [0, 1]>;     // [[true, 0], [false, 1]]
 type C = Zip<[1, 2], []>;                // []
@@ -144,22 +155,6 @@ type A = FirstParameter<typeof foo>; // string
 type B = FirstParameter<typeof bar>; // boolean
 type C = FirstParameter<typeof baz>; // unknown
 type D = FirstParameter<1>; // error + never
-```
-
-TODO: Добавить AppendArgument
-
-```ts
-type Fn1 = (a: number, b: string) => boolean;
-type A = AppendArgument<Fn1, Date>;  
-// (a: number, b: string, arg2: Date) => boolean
-
-type Fn2 = () => void;
-type B = AppendArgument<Fn2, number>; 
-// (arg0: number) => void
-
-type Fn3 = (x: boolean) => string;
-type C = AppendArgument<Fn3, string[]>; 
-// (x: boolean, arg1: string[]) => string
 ```
 
 ---

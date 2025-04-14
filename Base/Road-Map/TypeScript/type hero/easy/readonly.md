@@ -24,7 +24,7 @@ todo.description = "barFoo" // Error: cannot reassign a readonly property
 ---
 ## Решение 1
 
-Перебирать объединение можyj при помощи [[Distributive types (распределение типа)#Mapped types (перебор типа)|mapped types]]. Также нужно добавить [[Mapped object types (перебор типа объект)#Модификаторы|модификатор]] `readonly`.
+Перебирать объединение можно при помощи [[Distributive types (распределение типа)#Mapped types (перебор типа)|mapped types]]. Также нужно добавить [[Mapped object types (перебор типа объект)#Модификаторы|модификатор]] `readonly`.
 
 ```ts
 type MyReadonly<Type> = {

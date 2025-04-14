@@ -36,8 +36,6 @@ const stringLiteral = "hello";
 type StringLiteralLength = typeof stringLiteral["length"]; // number
 ```
 
-https://typehero.dev/challenge/length-of-string
-
 ---
 ## `stringLiteral[number]`
 
@@ -55,6 +53,11 @@ type StringLiteralItems = typeof stringLiteral[number]; // string
 ```ts
 type StringLiteralIndex = typeof stringLiteral[0]; // string
 ```
+
+---
+## `Template literal` синтаксис
+
+
 
 ---
 ## Перебор строкового литерала

@@ -15,14 +15,12 @@ type Result = AppendArgument<Fn, boolean> // (a: number, b: string, x: boolean) 
 ---
 ## Решение 1
 
-Используя [[Infer]], можно достучаться до параметров и возвращаемого типа функции, а при помощи конструкции `[...]` можно создать новый массив.
+Используя [[Infer#В функциях|infer]], можно достучаться до параметров и возвращаемого типа функции, а при помощи конструкции `[...]` можно создать новый массив.
 
 ```ts
-type AppendArgument<FunctionType extends (...args: any[]) => any, Argument> = FunctionType extends (
-	...args: infer Arguments
-) => infer ReturnType
-	? (...args: [...Arguments, x: Argument]) => ReturnType
-	: never;
+type AppendArgument<Type extends (...args: any[]) => any, ArgumentType> = Type extends (...args: infer Parameters) => infer ReturnType
+  ? (...args: [...Parameters, x: ArgumentType]) => ReturnType
+  : never
 
 type A = AppendArgument<(a: number, b: string) => number, boolean>; // (a: number, b: string, x: boolean) => number
 type B = AppendArgument<() => void, undefined>; // (x: undefined) => void
@@ -32,10 +30,8 @@ type B = AppendArgument<() => void, undefined>; // (x: undefined) => void
 ---
 ## Решение 2
 
-Вместо `infer` можно использовать встроенные утилиты `Parameters<FunctionType>` и `ReturnType<FunctionType>`
+Вместо `infer` можно использовать встроенные утилиты `Parameters<Type>` и `ReturnType<Type>`
 
 ```ts
-type AppendArgument<FunctionType extends (...args: any[]) => any, Argument> =
-	(...args: [...Parameters<FunctionType>, x: Argument]) => ReturnType<FunctionType> 
-
+type AppendArgument<Type extends (...args: any[]) => any, ArgumentType> = (...args: [...Parameters<Type>, x: ArgumentType]) => ReturnType<Type>
 ```
