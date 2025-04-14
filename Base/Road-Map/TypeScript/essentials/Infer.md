@@ -52,6 +52,7 @@ type D = DeepUnwrapArray<number> // error + number
 ---
 ## В кортежах
 
+[[Tuples (кортежи)#При помощи `infer`|Infer]]
 ### Вывод последнего элемента
 
 ```ts
@@ -177,6 +178,8 @@ type D = ExtractValueByKey<Union, "foo">;   // number | string
 ---
 ## В строковых литералах
 
+[[String literals (строковые литералы)#При помощи `infer`|Infer]]
+
 TODO: Добавить Split
 
 ```ts
@@ -186,9 +189,15 @@ type C = Split<"single", ",">;        // ["single"]
 type D = Split<"", ",">;              // [""]
 ```
 
-TODO: Добавить Trim
+## Вывод строкового литерала без пробелов в начале и в конце
 
 ```ts
+type Whitespaces = " " | "\n" | "\t";
+
+type Trim<Type extends string> = Type extends `${Whitespaces}${infer Rest}` | `${infer Rest}${Whitespaces}`
+	? Trim<Rest>
+	: Type
+
 type A = Trim<"   hello   ">;       // "hello"
 type B = Trim<"  spaced">;          // "spaced"
 type C = Trim<"inline  ">;          // "inline"

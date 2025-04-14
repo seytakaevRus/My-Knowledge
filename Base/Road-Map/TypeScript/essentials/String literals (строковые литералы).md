@@ -25,6 +25,24 @@ type World = "world";
 type HelloWorld = `${Hello} ${World}`; // "hello world"
 ```
 
+Передавать можно не только один тип, но и объединения. В `Methods` будет объединения из строк, где каждый `Method` сочетается с каждым `Field`. ^e0e594
+
+```ts
+type Method = "get" | "set";
+type Field = "name" | "age" | "address";
+
+type Methods = `${Method}_${Field}`;
+
+const test: Record<Methods, () => void> = {
+  get_name: () => {},
+  set_name: () => {},
+  get_address: () => {},
+  set_address: () => {},
+  get_age: () => {},
+  set_age: () => {}
+};
+```
+
 ---
 ## `stringLiteral["length"]`
 
@@ -53,11 +71,6 @@ type StringLiteralItems = typeof stringLiteral[number]; // string
 ```ts
 type StringLiteralIndex = typeof stringLiteral[0]; // string
 ```
-
----
-## `Template literal` синтаксис
-
-
 
 ---
 ## Перебор строкового литерала
