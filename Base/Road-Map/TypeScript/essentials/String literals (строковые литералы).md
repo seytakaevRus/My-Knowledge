@@ -16,7 +16,7 @@ type Literal = "hello"; // hello
 const hello = "hello"; // hello
 ```
 
-Также его можно создать при помощи синтаксиса `${}`, как в `JS`.
+Также его можно создать при помощи `template literal` синтаксиса (`${}`), как в `JS`. ^26d17b
 
 ```ts
 type Hello = "hello";
@@ -54,4 +54,23 @@ type StringLiteralItems = typeof stringLiteral[number]; // string
 
 ```ts
 type StringLiteralIndex = typeof stringLiteral[0]; // string
+```
+
+---
+## Перебор строкового литерала
+
+### При помощи `infer`
+
+Нужно создать дженерик `StringToArray<Type>`, который принимает строку и возвращает её представление в виде массива.
+
+При помощи `template literal` синтаксиса [[#^26d17b|можно создавать строки]], поэтому он подходит для использования с `infer`. Останется только хранить новый массив, как новый дженерик, подобное поведение можно встретить в задачи [[without]].
+
+```ts
+type StringToArray<Type extends string, Accumulator extends unknown[] = []> = Type extends `${infer FirstLetter}${infer Rest}`
+  ? StringToArray<Rest, [...Accumulator, FirstLetter]>
+  : Accumulator;
+
+type A = StringToArray<"foo">;  // ["f", "o", "o"]
+type B = StringToArray<"">;     // []
+type C = StringToArray<" T  S  ">; // [" ", "T", " ", " ", "S", " ", " "]
 ```
