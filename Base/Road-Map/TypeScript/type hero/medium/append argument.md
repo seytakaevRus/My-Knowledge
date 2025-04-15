@@ -15,7 +15,7 @@ type Result = AppendArgument<Fn, boolean> // (a: number, b: string, x: boolean) 
 ---
 ## Решение 1
 
-Используя [[Infer#В функциях|infer]], можно достучаться до параметров и возвращаемого типа функции, а при помощи конструкции `[...]` можно создать новый массив.
+Используя [[Infer#В функциях|infer]], можно достучаться до параметров и возвращаемого типа функции, а при помощи конструкции `[...]` можно создать новый массив, а при помощи `x : ArgumentType` создаю новый элемент кортежа.
 
 ```ts
 type AppendArgument<Type extends (...args: any[]) => any, ArgumentType> = Type extends (...args: infer Parameters) => infer ReturnType
