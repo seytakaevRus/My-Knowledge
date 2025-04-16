@@ -189,7 +189,7 @@ type C = Split<"single", ",">;        // ["single"]
 type D = Split<"", ",">;              // [""]
 ```
 
-## Вывод строкового литерала без пробелов в начале и в конце
+### Вывод строкового литерала без пробелов в начале и в конце
 
 ```ts
 type Whitespaces = " " | "\n" | "\t";
@@ -206,13 +206,19 @@ type E = Trim<"">;                  // ""
 type F = Trim<"    ">;              // ""
 ```
 
-TODO: Добавить StringLength
+### Вывод длины строкового литерала
 
 ```ts
-type A = StringLength<"hello">;      // 5
-type B = StringLength<"">;           // 0
-type C = StringLength<"typescript">; // 10
-type D = StringLength<"a b c">;      // 5 (пробелы считаются)
+type StringToArray<Type extends string, Accumulator extends unknown[] = []> = Type extends `${infer FirstItem}${infer Rest}`
+	? StringToArray<Rest, [...Accumulator, FirstItem]>
+	: Accumulator
+
+type LengthOfString<Type extends string> = StringToArray<Type>["length"];
+
+type A = LengthOfString<"hello">;      // 5
+type B = LengthOfString<"">;           // 0
+type C = LengthOfString<"typescript">; // 10
+type D = LengthOfString<"a b c">;      // 5
 ```
 
 ---
