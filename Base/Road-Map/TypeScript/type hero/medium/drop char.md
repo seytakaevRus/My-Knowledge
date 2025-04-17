@@ -35,5 +35,7 @@ type F = DropChar<"_a_b_c_", "_">;      // "abc"
 ## Решение 2
 
 ```ts
-
+type DropChar<Input extends string, CharacterToDrop extends string> = Input extends `${infer FirstCharacter}${CharacterToDrop}${infer Rest}`
+	? DropChar<`${FirstCharacter}${Rest}`, CharacterToDrop>
+	: Input
 ```
