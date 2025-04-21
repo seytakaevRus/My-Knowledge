@@ -179,14 +179,37 @@ type D = ExtractValueByKey<Union, "foo">;   // number | string
 ## В строковых литералах
 
 [[String literals (строковые литералы)#При помощи `infer`|Infer]]
-
-TODO: Добавить Split
+### Вывод массива строк, разделённых по символу
 
 ```ts
-type A = Split<"a,b,c", ",">;         // ["a", "b", "c"]
-type B = Split<"a|b|c|d", "|">;       // ["a", "b", "c", "d"]
-type C = Split<"single", ",">;        // ["single"]
-type D = Split<"", ",">;              // [""]
+type Split<Input extends string, Delimiter extends string, Output extends string[] = []> = Delimiter extends ""
+  ? never
+  : Input extends `${infer First}${Delimiter}${infer Rest}`
+    ? Split<Rest, Delimiter, [...Output, First]>
+    : [...Output, Input]
+
+type A = Split<"a,b,c", ",">;            // ["a", "b", "c"]
+type B = Split<"hello world", " ">;      // ["hello", "world"]
+type C = Split<"foo", ",">;              // ["foo"]
+type D = Split<"", ",">;                 // [""]
+type E = Split<"a,", ",">;               // ["a", ""]
+type F = Split<",a", ",">;               // ["", "a"]
+type G = Split<",", ",">;                // ["", ""]
+type H = Split<"a,,b", ",">;             // ["a", "", "b"]
+type I = Split<"a", "">;                 // never
+type J = Split<"abc", "x">;              // ["abc"]
+```
+
+Все граничные случаи обрабатывать не вижу смысла, так как эта утилита используется в составе чего-то, а не сама по себе.
+
+Но при помощи неё можно накинуть типизацию на `split` и получать конкретные значения на выходе при компиляции, это забавно, но в данном случае бесполезно.
+
+```ts
+const mySplit = <Input extends string, Delimiter extends string>(input: Input, delimiter: Delimiter): Split<Input, Delimiter> => {
+    return input.split(delimiter) as Split<Input, Delimiter>;
+}
+
+const a = mySplit("a,b,c,d", ","); ["a", "b", "c", "d"]
 ```
 
 ### Вывод строкового литерала без пробелов в начале и в конце
