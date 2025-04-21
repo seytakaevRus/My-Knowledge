@@ -74,16 +74,6 @@ type StringLiteralIndex = typeof stringLiteral[0]; // string
 
 ---
 ## Перебор строкового литерала
-> Тип `infer` в шаблонной строке может выводить пустую строку. Такое поведение встречается при переборе или удаления символов, например, если символ, который мы извлекаем — первый или последний в строке. ^infer-can-be-empty
-
-```ts
-// Пример: "" не содержит символ "x", значит шаблон не сработает — результат false
-type T1 = "" extends `${infer A}${"x"}${infer B}` ? true : false; // false
-
-// Пример: "x" матчится, A и B — пустые строки
-type T2 = "x" extends `${infer A}${"x"}${infer B}` ? [A, B] : never; // ["", ""]
-```
-
 ### При помощи `infer`
 
 Нужно создать дженерик `StringToArray<Type>`, который принимает строку и возвращает её представление в виде массива.
@@ -98,4 +88,22 @@ type StringToArray<Type extends string, Accumulator extends unknown[] = []> = Ty
 type A = StringToArray<"foo">;  // ["f", "o", "o"]
 type B = StringToArray<"">;     // []
 type C = StringToArray<" T  S  ">; // [" ", "T", " ", " ", "S", " ", " "]
+```
+
+### Как `infer` работает с пустыми строками и границами ^infer-can-be-empty
+
+```ts
+// 1. Когда передаётся пустая строка, один infer на одну пустую строку, так как делить пустоту на что-то нельзя
+type T0 = "" extends `${infer A}` ? A : never; // ""
+type T1 = "" extends `${infer A}${infer B}` ? [A, B] : never; // never
+
+// 2. На границе в непустых строках
+// Шаблон с символом "x" матчится — A и B становятся пустыми строками
+type T2 = "x" extends `${infer A}${"x"}${infer B}` ? [A, B] : never; // ["", ""]
+
+// Один символ — матчится, First = "a", Rest = ""
+type T3 = "a" extends `${infer First}${infer Rest}` ? [First, Rest] : never; // ["a", ""]
+
+// 3. Между символами в непустой строке
+type T4 = "ab" extends `a${infer EmptyString}b` ? [EmptyString] : never; // ""
 ```

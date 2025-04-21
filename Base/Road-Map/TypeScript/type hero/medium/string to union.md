@@ -10,6 +10,8 @@ type StringToUnion<'hello'> // 'h' | 'e' | 'l' | 'o'
 ---
 ## Решение 1
 
+Используя [[String literals (строковые литералы)#Перебор строкового литерала|перебор строкового литерала]], вытаскиваем каждый раз первую букву и кладём в `Output`.
+
 ```ts
 type StringToArray<Input extends string, Output extends unknown[] = []> = Input extends `${infer FirstLetter}${infer Rest}`
 	? StringToArray<Rest, [...Output, FirstLetter]>
@@ -25,6 +27,8 @@ type D = StringToUnion<"">;       // never
 
 ---
 ## Решение 2
+
+Можно сделать проще, если использовать объединение ([[Tuples (кортежи)#При помощи `infer`|подобная задача]]).
 
 ```ts
 type StringToUnion<Input extends string> = Input extends `${infer FirstLetter}${infer Rest}`
