@@ -1,6 +1,6 @@
 ## Что это за тип?
 
-Тип `never` обозначает пустоту. Если объединить этот тип с другими, то `never` просто удалится из объединения. Потому что, если к пустоте добавить что-то, то пустота исчезнет. ^3f5660
+Тип `never` обозначает пустоту. Если объединить этот тип с другими, то `never` исчезнет из объединения. Если к пустоте добавить что-то - пустота исчезнет. ^3f5660
 
 ```ts
 type A = string | never; // string
@@ -31,10 +31,70 @@ const someFunction2 = (value: 0 | 1) => {
 };
 ```
 
-> Поэтому не стоит использовать `never`, чтобы обозначить, что функция может вернуть ошибку. О таком способе без `never` будет рассказано [[Easy#Как можно обозначить ошибку?|ниже]].
+> Поэтому не стоит использовать `never`, чтобы обозначить, что функция может вернуть ошибку. Для этого существует другой [[Easy#Как можно обозначить ошибку?|способ]].
 
 ---
-## Когда TypeScript использует never?
+## Поведение при сравнении
+
+Раз `never` - пустота, то она является [[Conditional types (условные типы)#Если `T` и `U` это встроенные типы|наименее общим]] типом, поэтому при `never` в левой стороне `extends` всегда вернёт `true`.
+
+```ts
+type A = never extends boolean ? true : false; // true
+type B = never extends number ? true : false; // true
+type C = never extends string ? true : false; // true
+type D = never extends symbol ? true : false; // true
+type E = never extends object ? true : false; // true
+type F = never extends [] ? true : false; // true
+type G = never extends Function ? true : false; // true
+type H = never extends 'wtf' ? true : false; // true
+type I = never extends never ? true : false; // true
+```
+
+Отсюда и следует то, что если `never` стоит в правой части, `extends` всегда вернёт `false`, если слева не `never`.
+
+```ts
+type A = boolean extends never  ? true : false; // false
+type B = number extends never  ? true : false; // false
+type C = string extends never  ? true : false; // false
+type D = symbol extends never  ? true : false; // false
+type E = object extends never  ? true : false; // false
+type F = [] extends never  ? true : false; // false
+type G = Function extends never  ? true : false; // false
+type H = 'wtf' extends never ? true : false; // false
+type I = never extends never ? true : false; // true
+```
+
+---
+## Поведение при дистрибутивности
+
+При использовании `never` с [[Distributive types (распределение типа)|распределением типа]], будет всегда возвращён `never`.
+
+```ts
+type Distributive<Type> = Type extends never ? 1 : 0;
+
+type A = Distributive<string>; // 0
+type B = Distributive<never>; // never
+```
+
+Это поведение кажется странным, условный тип может вернуть значение из веток, но `never` не прописано в ветках. Раз `never` обозначает пустоту, то из неё ничего нельзя вытянуть и распределение не сможет выполниться, поэтому `TS` в таких случаях возвращает `never`.
+
+Если всё-таки есть необходимость передачи `never` для дальнейшего сравнения можно использовать синтаксис `[]`, который:
+
+TODO: Добавить ссылку на дистрибутивность.
+
+1. Запрещает распределение типа (ниже это `Type`);
+2. Позволяет `TS` производить сравнение с `never`.
+
+```ts
+type IsNever<Type> = [Type] extends [never] ? true : false;
+```
+
+>`never` должно ставиться строго справа по [[#Поведение при сравнении|этой причине]]. `StrictEqual` можно также использовать, но там важно, чтобы передаваемые дженерики стояли справа от `extends`, тогда можно обрабатывать `never`.
+
+TODO: Написать про использование работает с {}, не работает с () => {}
+
+---
+## Когда `TypeScript` ещё использует never?
 
 `TS` вернёт `never` в трёх случаях.
 
@@ -81,7 +141,7 @@ type ImageNode = { type: "image"; base64: string };
 type AppNode = PointNode | CommonNode | ImageNode;
 ```
 
-Есть также функция, которая на вход принимает узел типа `AppNode` и в зависимости от типа узла делает какие-то действия.
+Есть также функция, которая на вход принимает узел тип `AppNode` и в зависимости от типа узла делает какие-то действия.
 
 ```ts
 const doSomeLogic = (node: AppNode) => {
@@ -139,7 +199,7 @@ const doSomeLogic = (node: AppNode) => {
 Для этого потребуется написать несколько вспомогательных типов и утилит.
 
 - `ErrorT`, который содержит сообщение об ошибке и `kind` равный `error`;
-- `Success<T>`, который содержит значений и `kind` равный `success`;
+- `Success<T>`, который содержит значение, равное `T`,  и `kind` равный `success`;
 - Оба типа объединяются в `Result<T>`;
 - Функции `createError` и `createSuccess`, которые возвращают соответствующие типы.
 
